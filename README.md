@@ -1,7 +1,7 @@
 # terraform-demo-google
 Terraform Demo using Google provider
 
-
+```
 Project: demo-terraform-google
  └─ test-team-project [path: ./test-team-project]
     ├─ project_members [path: ./project_members]
@@ -11,4 +11,5 @@ Project: demo-terraform-google
     │  └─ project-service-account-key [path: ./project-service-account-key]
     ├─ project-service-enable-cloudbilling [path: ./project-service-enable-cloudbilling]
     ├─ project-service-enable-cloudresourcemanager [path: ./project-service-enable-cloudresourcemanager]
-    └─ project-service-enable-compute [path: ./project-service-enable-compute]
+    └─ project-service-enable-compute [path: ./project-service-enable-compute
+```
