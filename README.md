@@ -8,7 +8,7 @@ export PROJECT_ID=""    ## e.g. terrahub-123456
 export PROJECT_NAME=""  ## e.g. TerraHub
 export IAM_NAME=""      ## e.g. terraform
 export IAM_DESC=""      ## e.g. terraform service account
-export GOOGLE_APPLICATION_CREDENTIALS=""  ## e.g. ${HOME}/.config/gcloud/terraform.json
+export GOOGLE_CREDENTIALS=""  ## e.g. ${HOME}/.config/gcloud/terraform.json
 ```
 
 ## Login to Google Cloud
@@ -34,7 +34,7 @@ gcloud beta billing projects link ${PROJECT_ID} \
 gcloud iam service-accounts create ${IAM_NAME} \
   --display-name="${IAM_DESC}"
 
-gcloud iam service-accounts keys create ${GOOGLE_APPLICATION_CREDENTIALS} \
+gcloud iam service-accounts keys create ${GOOGLE_CREDENTIALS} \
   --iam-account="${IAM_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 ```
 
