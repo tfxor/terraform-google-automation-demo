@@ -2,13 +2,13 @@
 
 ## Setup Google Cloud ENV Variables
 ```shell
+export GOOGLE_CLOUD_PROJECT=""            ## e.g. terrahub-123456
+export GOOGLE_APPLICATION_CREDENTIALS=""  ## e.g. ${HOME}/.config/gcloud/terraform.json
 export ORG_ID=""        ## e.g. 123456789012
 export BILLING_ID=""    ## e.g. 123456-ABCDEF-ZYXWVU
-export PROJECT_ID=""    ## e.g. terrahub-123456
 export PROJECT_NAME=""  ## e.g. TerraHub
 export IAM_NAME=""      ## e.g. terraform
 export IAM_DESC=""      ## e.g. terraform service account
-export GOOGLE_CREDENTIALS=""  ## e.g. ${HOME}/.config/gcloud/terraform.json
 ```
 
 ## Login to Google Cloud
@@ -18,14 +18,14 @@ gcloud auth login
 
 ## Create Google Cloud Project & Billing
 ```shell
-gcloud projects create ${PROJECT_ID} \
+gcloud projects create ${GOOGLE_CLOUD_PROJECT} \
   --name="${PROJECT_NAME}"
   --organization="${ORG_ID}" \
   --set-as-default
 
-gcloud config set project ${PROJECT_ID}
+gcloud config set project ${GOOGLE_CLOUD_PROJECT}
 
-gcloud beta billing projects link ${PROJECT_ID} \
+gcloud beta billing projects link ${GOOGLE_CLOUD_PROJECT} \
   --billing-account="${BILLING_ID}"
 ```
 
@@ -34,25 +34,25 @@ gcloud beta billing projects link ${PROJECT_ID} \
 gcloud iam service-accounts create ${IAM_NAME} \
   --display-name="${IAM_DESC}"
 
-gcloud iam service-accounts keys create ${GOOGLE_CREDENTIALS} \
-  --iam-account="${IAM_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
+gcloud iam service-accounts keys create ${GOOGLE_APPLICATION_CREDENTIALS} \
+  --iam-account="${IAM_NAME}@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com"
 ```
 
 ## Add IAM Policy Binding to Google Cloud Project
 ```shell
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-  --member="serviceAccount:${IAM_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} \
+  --member="serviceAccount:${IAM_NAME}@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com" \
   --role="roles/editor"
 ```
 
 ## Add IAM Policy Binding to Google Cloud Organization
 ```shell
 gcloud organizations add-iam-policy-binding ${ORG_ID} \
-  --member="serviceAccount:${IAM_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --member="serviceAccount:${IAM_NAME}@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com" \
   --role="roles/resourcemanager.projectCreator"
 
 gcloud organizations add-iam-policy-binding ${ORG_ID} \
-  --member="serviceAccount:${IAM_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --member="serviceAccount:${IAM_NAME}@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com" \
   --role="roles/billing.user"
 ```
 
@@ -80,8 +80,8 @@ terrahub component -t google_project -n project
 NOTE: BELOW COMMANDS ARE WORK IN PROGRESS / NOT IMPLEMENTED YET
 ```shell
 terrahub configure -c project terraform.var.google_org_id="${ORG_ID}"
-terrahub configure -c project terraform.var.google_project_id="${PROJECT_ID}"
 terrahub configure -c project terraform.var.google_billing_account="${BILLING_ID}"
+terrahub configure -c project terraform.var.google_project_id="${GOOGLE_CLOUD_PROJECT}"
 ```
 
 ## Execute TerraHub Component
