@@ -1,5 +1,16 @@
 # Terraform Demo using Google provider
 
+## Login to Google Cloud
+```shell
+gcloud auth login
+```
+
+## Get Google Cloud values for ORG_ID and BILLING_ID
+```shell
+gcloud organizations list
+gcloud beta billing accounts list
+```
+
 ## Setup Google Cloud ENV Variables
 ```shell
 export GOOGLE_CLOUD_PROJECT=""            ## e.g. terrahub-123456
@@ -9,11 +20,6 @@ export BILLING_ID=""    ## e.g. 123456-ABCDEF-ZYXWVU
 export PROJECT_NAME=""  ## e.g. TerraHub
 export IAM_NAME=""      ## e.g. terraform
 export IAM_DESC=""      ## e.g. terraform service account
-```
-
-## Login to Google Cloud
-```shell
-gcloud auth login
 ```
 
 ## Create Google Cloud Project & Billing

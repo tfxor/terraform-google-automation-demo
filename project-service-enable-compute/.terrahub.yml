@@ -2,7 +2,7 @@
 component:
   name: 'project-service-enable-compute'
   dependsOn:
-    - '../test-team-project'
+    - '../project'
 
 # ## build config
 # build:

@@ -2,7 +2,7 @@
 component:
   name: 'project_members'
   dependsOn:
-    - '../test-team-project'
+    - '../project'
 
 # ## build config
 # build:

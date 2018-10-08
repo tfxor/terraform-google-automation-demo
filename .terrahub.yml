@@ -10,6 +10,5 @@ terraform:
     - default.tfvars
   var:
     google_org_id: 123456789012
-    google_project_id: terrahub-123456
     google_billing_account: 123456-ABCDEF-ZYXWVU
   version: 0.11.7

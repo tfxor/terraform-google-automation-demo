@@ -2,7 +2,7 @@
 component:
   name: 'project-service-account'
   dependsOn:
-    - '../test-team-project'
+    - '../project'
 
 # ## build config
 # build:
