@@ -3,3 +3,7 @@ component:
   name: 'project-service-enable-iam'
   dependsOn:
     - '../project'
+
+ci:
+  mapping:
+  - '.' ## current folder relative to where .terrahub.yml is defined
