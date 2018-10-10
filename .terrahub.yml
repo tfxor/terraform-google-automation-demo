@@ -9,6 +9,10 @@ terraform:
   varFile:
     - default.tfvars
   var:
+    google_project_id: project-123456789012
+    google_region: us-central1
     google_org_id: 123456789012
+    google_account_id: demo-team
     google_billing_account: 123456-ABCDEF-ZYXWVU
+    google_location_id: us-central
   version: 0.11.7

@@ -12,14 +12,6 @@ output "private_key" {
   value = "${google_service_account_key.project-service-account-key.private_key}"
 }
 
-output "private_key_encrypted" {
-  value = "${google_service_account_key.project-service-account-key.private_key_encrypted}"
-}
-
-output "private_key_fingerprint" {
-  value = "${google_service_account_key.project-service-account-key.private_key_fingerprint}"
-}
-
 output "valid_after" {
   value = "${google_service_account_key.project-service-account-key.valid_after}"
 }

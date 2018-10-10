@@ -2,6 +2,7 @@
 component:
   name: 'project-service-account'
   dependsOn:
+    - '../project-service-enable-iam'
     - '../project'
 
 # ## build config

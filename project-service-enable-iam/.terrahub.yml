@@ -1,0 +1,5 @@
+## local config
+component:
+  name: 'project-service-enable-iam'
+  dependsOn:
+    - '../project'
