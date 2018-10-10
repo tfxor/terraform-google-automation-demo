@@ -1,0 +1,9 @@
+## local config
+component:
+  name: 'project_members'
+  dependsOn:
+    - '../project'
+
+ci:
+  mapping:
+  - '.' ## current folder relative to where .terrahub.yml is defined
