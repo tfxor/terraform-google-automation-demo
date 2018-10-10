@@ -25,7 +25,7 @@ export IAM_DESC=""      ## e.g. terraform service account
 ## Create Google Cloud Project & Billing
 ```shell
 gcloud projects create ${GOOGLE_CLOUD_PROJECT} \
-  --name="${PROJECT_NAME}"
+  --name="${PROJECT_NAME}" \
   --organization="${ORG_ID}" \
   --set-as-default
 
