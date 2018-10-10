@@ -85,9 +85,9 @@ terrahub component -t google_project -n project
 ## Update TerraHub Component Config
 NOTE: BELOW COMMANDS ARE WORK IN PROGRESS / NOT IMPLEMENTED YET
 ```shell
-terrahub configure terraform.var.google_org_id="${ORG_ID}"
-terrahub configure terraform.var.google_billing_account="${BILLING_ID}"
-terrahub configure terraform.var.google_project_id="${GOOGLE_CLOUD_PROJECT}"
+terrahub configure -c terraform.var.google_org_id="${ORG_ID}"
+terrahub configure -c terraform.var.google_billing_account="${BILLING_ID}"
+terrahub configure -c terraform.var.google_project_id="${GOOGLE_CLOUD_PROJECT}"
 ```
 
 ## Execute TerraHub Component
