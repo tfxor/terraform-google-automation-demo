@@ -1,8 +1,8 @@
 ## local config
 component:
-  name: 'project-iam-policy-binding-storage-admin'
+  name: 'project_service_account_key'
   dependsOn:
-    - '../project_members'
+    - '../project'
 
 ci:
   mapping:
