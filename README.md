@@ -80,6 +80,11 @@ terrahub project -n demo-terraform-google
 ## Create TerraHub Component
 ```shell
 terrahub component -t google_project -n project
+terrahub component -t google_service_account -n project-service-account -o ../project
+terrahub component -t google_service_account_key -n project-service-account-key -o ../project-service-account
+terrahub component -t google_project_iam_member -n project_members -o ../project
+terrahub component -t google_project_iam_binding -n project-iam-policy-binding-storage-admin -o ../project_members
+terrahub component -t google_project_iam_binding -n project-iam-policy-binding-compute-admin -o ../project_members
 ```
 
 ## Update TerraHub Component Config

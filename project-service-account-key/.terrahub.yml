@@ -2,7 +2,7 @@
 component:
   name: 'project-service-account-key'
   dependsOn:
-    - '../project-service-account'
+    - '../project'
 
 ci:
   mapping:

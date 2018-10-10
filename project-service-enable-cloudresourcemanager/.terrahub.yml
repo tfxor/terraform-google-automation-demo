@@ -1,9 +1,0 @@
-## local config
-component:
-  name: 'project-service-enable-cloudresourcemanager'
-  dependsOn:
-    - '../project'
-
-ci:
-  mapping:
-  - '.' ## current folder relative to where .terrahub.yml is defined
