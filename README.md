@@ -31,6 +31,11 @@ gcloud projects create ${GOOGLE_CLOUD_PROJECT} \
 
 gcloud config set project ${GOOGLE_CLOUD_PROJECT}
 
+gcloud services enable cloudresourcemanager.googleapis.com
+gcloud services enable cloudbilling.googleapis.com
+gcloud services enable iam.googleapis.com
+gcloud services enable compute.googleapis.com
+
 gcloud beta billing projects link ${GOOGLE_CLOUD_PROJECT} \
   --billing-account="${BILLING_ID}"
 ```
@@ -62,14 +67,6 @@ gcloud organizations add-iam-policy-binding ${ORG_ID} \
   --role="roles/billing.user"
 ```
 
-## Enable Google Cloud Service
-```shell
-gcloud services enable cloudresourcemanager.googleapis.com
-gcloud services enable cloudbilling.googleapis.com
-gcloud services enable iam.googleapis.com
-gcloud services enable compute.googleapis.com
-```
-
 ## Create TerraHub Project
 ```shell
 mkdir demo-terraform-google
@@ -80,15 +77,14 @@ terrahub project -n demo-terraform-google
 ## Create TerraHub Component
 ```shell
 terrahub component -t google_project -n project
-terrahub component -t google_service_account -n project-service-account -o ../project
-terrahub component -t google_service_account_key -n project-service-account-key -o ../project-service-account
+terrahub component -t google_service_account -n project_service_account -o ../project
+terrahub component -t google_service_account_key -n project_service_account_key -o ../project_service_account
 terrahub component -t google_project_iam_member -n project_members -o ../project
-terrahub component -t google_project_iam_binding -n project-iam-policy-binding-storage-admin -o ../project_members
-terrahub component -t google_project_iam_binding -n project-iam-policy-binding-compute-admin -o ../project_members
+terrahub component -t google_project_iam_binding -n project_iam_policy_binding_storage_admin -o ../project_members
+terrahub component -t google_project_iam_binding -n project_iam_policy_binding_compute_admin -o ../project_members
 ```
 
 ## Update TerraHub Component Config
-NOTE: BELOW COMMANDS ARE WORK IN PROGRESS / NOT IMPLEMENTED YET
 ```shell
 terrahub configure -c terraform.var.google_org_id="${ORG_ID}"
 terrahub configure -c terraform.var.google_billing_account="${BILLING_ID}"
