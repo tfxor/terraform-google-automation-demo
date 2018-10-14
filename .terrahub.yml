@@ -6,8 +6,8 @@ project:
   include:
   - '.'
   exclude:
-  - '**/node_modules/*'
   - '**/.terraform/*'
+  - '**/node_modules/*'
 
 ## terraform config
 terraform:
