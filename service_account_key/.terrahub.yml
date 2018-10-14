@@ -1,0 +1,9 @@
+## local config
+component:
+  name: 'service_account_key'
+  dependsOn:
+  - '../service_account'
+
+ci:
+  mapping:
+  - '.'

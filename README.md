@@ -77,11 +77,11 @@ terrahub project -n demo-terraform-google
 ## Create TerraHub Component
 ```shell
 terrahub component -t google_project -n project
-terrahub component -t google_service_account -n project_service_account -o ../project
-terrahub component -t google_service_account_key -n project_service_account_key -o ../project_service_account
-terrahub component -t google_project_iam_member -n project_members -o ../project
-terrahub component -t google_project_iam_binding -n project_iam_policy_binding_storage_admin -o ../project_members
-terrahub component -t google_project_iam_binding -n project_iam_policy_binding_compute_admin -o ../project_members
+terrahub component -t google_service_account -n service_account -o ../project
+terrahub component -t google_service_account_key -n service_account_key -o ../service_account
+terrahub component -t google_project_iam_member -n project_iam_member -o ../project
+terrahub component -t google_project_iam_binding -n project_iam_policy_binding_storage_admin -o ../project_iam_member
+terrahub component -t google_project_iam_binding -n project_iam_policy_binding_compute_admin -o ../project_iam_member
 ```
 
 ## Update TerraHub Component Config

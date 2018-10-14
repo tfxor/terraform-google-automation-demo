@@ -3,11 +3,16 @@ project:
   name: demo-terraform-google
   code: f2754a99
   provider: google
+  include:
+  - '.'
+  exclude:
+  - '**/node_modules/*'
+  - '**/.terraform/*'
 
 ## terraform config
 terraform:
   varFile:
-    - default.tfvars
+  - default.tfvars
   var:
     google_project_id: project-123456789012
     google_region: us-central1

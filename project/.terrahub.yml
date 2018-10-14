@@ -4,4 +4,4 @@ component:
 
 ci:
   mapping:
-  - '.' ## current folder relative to where .terrahub.yml is defined
+  - '.'

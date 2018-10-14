@@ -1,0 +1,9 @@
+## local config
+component:
+  name: 'project_iam_binding_storage_admin'
+  dependsOn:
+  - '../project_iam_member'
+
+ci:
+  mapping:
+  - '.'

@@ -1,9 +1,0 @@
-## local config
-component:
-  name: 'project_iam_policy_binding_compute_admin'
-  dependsOn:
-    - '../project_members'
-
-ci:
-  mapping:
-  - '.' ## current folder relative to where .terrahub.yml is defined
