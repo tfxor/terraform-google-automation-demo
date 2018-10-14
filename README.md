@@ -10,30 +10,6 @@ gcloud auth login
 > NOTE: If you don't have Google Cloud CLI, check out
 [installation guide](https://cloud.google.com/sdk/install)
 
-## Get Values from Your Google Cloud Account
-
-Run the following command in terminal:
-```shell
-gcloud organizations list
-```
-
-Your output should be similar to the one below:
-```
-DISPLAY_NAME            ID  DIRECTORY_CUSTOMER_ID
-mydomain.com  123456789012  a1b2c3d4e
-```
-
-Run the following command in terminal:
-```shell
-gcloud beta billing accounts list
-```
-
-Your output should be similar to the one below:
-```
-ACCOUNT_ID            NAME                OPEN  MASTER_ACCOUNT_ID
-123456-ABCDEF-ZYXWVU  My Billing Account  True
-```
-
 ## Setup Environment Variables (Will Be Used Later)
 
 Manual Setup (set values in double quotes and run the following command in terminal):
@@ -47,9 +23,42 @@ export IAM_NAME=""      ## e.g. terraform
 export IAM_DESC=""      ## e.g. terraform service account
 ```
 
+### Setup ORG_ID Programmatically
+
+Run the following command in terminal:
+```shell
+gcloud organizations list
+```
+
+Your output should be similar to the one below:
+```
+DISPLAY_NAME            ID  DIRECTORY_CUSTOMER_ID
+mydomain.com  123456789012  a1b2c3d4e
+```
+
 Automated Setup (run the following command in terminal):
 ```shell
 export ORG_ID="$(gcloud organizations list --format=json | jq '.[0].name[14:]')"
+```
+
+> NOTE: If you don't have JQ CLI, check out
+[installation guide](https://stedolan.github.io/jq/download/)
+
+### Setup BILLING_ID Programmatically
+
+Run the following command in terminal:
+```shell
+gcloud beta billing accounts list
+```
+
+Your output should be similar to the one below:
+```
+ACCOUNT_ID            NAME                OPEN  MASTER_ACCOUNT_ID
+123456-ABCDEF-ZYXWVU  My Billing Account  True
+```
+
+Automated Setup (run the following command in terminal):
+```shell
 export BILLING_ID="$(gcloud beta billing accounts list --format=json | jq '.[0].name[16:]')"
 ```
 
