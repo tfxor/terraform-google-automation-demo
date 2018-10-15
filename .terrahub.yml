@@ -1,0 +1,23 @@
+## project config
+project:
+  name: demo-terraform-google
+  code: f2754a99
+  provider: google
+  include:
+  - '.'
+  exclude:
+  - '**/.terraform/*'
+  - '**/node_modules/*'
+
+## terraform config
+terraform:
+  varFile:
+  - default.tfvars
+  var:
+    google_project_id: project-123456789012
+    google_region: us-central1
+    google_org_id: 123456789012
+    google_service_account_name: demo-team
+    google_billing_account: 123456-ABCDEF-ZYXWVU
+    google_location_id: us-central
+  version: 0.11.7

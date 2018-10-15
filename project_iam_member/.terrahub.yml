@@ -1,0 +1,9 @@
+## local config
+component:
+  name: 'project_iam_member'
+  dependsOn:
+  - '../project'
+
+ci:
+  mapping:
+  - '.'
