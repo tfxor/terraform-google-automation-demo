@@ -1,5 +1,5 @@
 resource "google_project_iam_member" "project_iam_member" {
   project = "${var.google_project_id}"
   role    = "${var.google_project_role}"
-  members = "${var.google_project_members}"
+  member  = "${var.google_project_member}"
 }

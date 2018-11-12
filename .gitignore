@@ -2,8 +2,4 @@
 **/.terraform/*
 
 # .tfstate files
-*.tfstate
-*.tfstate.*
-
-# .tfvars files
-*.tfvars
+**/*.tf*
