@@ -1,8 +1,7 @@
 ## project config
 project:
-  name: demo-terraform-google
+  name: demo-terraform-automation-google
   code: f2754a99
-  provider: google
   include:
   - '.'
   exclude:
