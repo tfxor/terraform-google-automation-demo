@@ -1,4 +1,4 @@
-# Terraform Demo using Google provider
+# Terraform Automation using Google Provider
 
 ## Login to Google Cloud
 
