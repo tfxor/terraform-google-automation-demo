@@ -19,6 +19,7 @@ template:
     google_location_id: us-central
   provider:
     google: {}
+
 ## terraform config
 terraform:
   varFile: ['default.tfvars']    
