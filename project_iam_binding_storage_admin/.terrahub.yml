@@ -1,14 +1,15 @@
 ## local config
 component:
   name: 'project_iam_binding_storage_admin'
+  mapping: ['.']
   dependsOn:
-  - '../project_iam_member'
+    - '../project_iam_member'
   template:
     resource:
       google_project_iam_binding:
           project_iam_binding_storage_admin:
-            members: ${var.google_project_members}
             project: ${local.google_project_id}
+            members: ${var.google_project_members}
             role: ${var.google_project_role}
     output:
       etag:
@@ -24,7 +25,3 @@ component:
       google_project_members:
         - demo@mail.com
       google_project_role: roles/storage.admin
-
-ci:
-  mapping:
-  - '.'

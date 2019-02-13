@@ -1,15 +1,16 @@
 ## local config
 component:
   name: 'service_account'
+  mapping: ['.']
   dependsOn:
-  - '../project'
+    - '../project'
   template:
     resource:
       google_service_account:
           service_account:
+            project: ${local.google_project_id}
             account_id: ${local.google_service_account_name}
             display_name: ${var.google_service_account_display_name}
-            project: ${local.google_project_id}
     output:
       email:
           value: ${google_service_account.service_account.email}
@@ -24,7 +25,3 @@ component:
           type: string
     tfvars:
       google_service_account_display_name: service_account
-
-ci:
-  mapping:
-  - '.'

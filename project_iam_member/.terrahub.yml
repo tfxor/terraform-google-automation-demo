@@ -1,14 +1,15 @@
 ## local config
 component:
   name: 'project_iam_member'
+  mapping: ['.']
   dependsOn:
-  - '../project'
+    - '../project'
   template:
     resource:
       google_project_iam_member:
           project_iam_member:
-            member: ${var.google_project_member}
             project: ${local.google_project_id}
+            member: ${var.google_project_member}
             role: ${var.google_project_role}
     output:
       etag:
@@ -23,7 +24,3 @@ component:
     tfvars:
       google_project_member: demo@mail.com
       google_project_role: roles/viewer
-
-ci:
-  mapping:
-  - '.'

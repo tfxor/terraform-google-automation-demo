@@ -7,7 +7,7 @@ Run the following command in terminal:
 gcloud auth login
 ```
 
-> NOTE: If you don't have Google Cloud CLI, check out
+> NOTE: If you don't have Google Cloud CLI, check out this
 [installation guide](https://cloud.google.com/sdk/install)
 
 ## Setup Environment Variables (Will Be Used Later)
@@ -30,7 +30,7 @@ Automated Setup (run the following command in terminal):
 export ORG_ID="$(gcloud organizations list --format=json | jq '.[0].name[14:]')"
 ```
 
-> NOTE: If you don't have JQ CLI, check out
+> NOTE: If you don't have JQ CLI, check out this
 [installation guide](https://stedolan.github.io/jq/download/)
 
 ### Setup BILLING_ID Programmatically
@@ -40,7 +40,7 @@ Automated Setup (run the following command in terminal):
 export BILLING_ID="$(gcloud beta billing accounts list --format=json | jq '.[0].name[16:]')"
 ```
 
-> NOTE: If you don't have JQ CLI, check out
+> NOTE: If you don't have JQ CLI, check out this
 [installation guide](https://stedolan.github.io/jq/download/)
 
 ## Create Google Cloud Project & Billing
@@ -123,10 +123,10 @@ Your output should be similar to the one below:
 ```
 Usage: terrahub [command] [options]
 
-terrahub@0.0.28 (built: 2018-10-11T12:33:57.775Z)
+terrahub@0.1.28 (built: 2019-02-08T17:17:41.912Z)
 ```
 
-> NOTE: If you don't have TerraHub CLI, check out
+> NOTE: If you don't have TerraHub CLI, check out this
 [installation guide](https://www.npmjs.com/package/terrahub)
 
 Run the following command in terminal:
@@ -180,9 +180,9 @@ Project: demo-terraform-google
 
 Run the following command in terminal:
 ```shell
-terrahub configure -c terraform.var.google_org_id="${ORG_ID}"
-terrahub configure -c terraform.var.google_billing_account="${BILLING_ID}"
-terrahub configure -c terraform.var.google_project_id="${GOOGLE_CLOUD_PROJECT}"
+terrahub configure -c template.locals.google_org_id="${ORG_ID}"
+terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
+terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}"
 ```
 
 Your output should be similar to the one below:
