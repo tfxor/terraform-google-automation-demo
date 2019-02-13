@@ -3,6 +3,27 @@ component:
   name: 'service_account'
   dependsOn:
   - '../project'
+  template:
+    resource:
+      google_service_account:
+          service_account:
+            account_id: ${local.google_service_account_name}
+            display_name: ${var.google_service_account_display_name}
+            project: ${local.google_project_id}
+    output:
+      email:
+          value: ${google_service_account.service_account.email}
+      name:
+          value: ${google_service_account.service_account.name}
+      unique_id:
+          value: ${google_service_account.service_account.unique_id}
+    provider:
+      google: {}
+    variable:
+      google_service_account_display_name:
+          type: string
+    tfvars:
+      google_service_account_display_name: service_account
 
 ci:
   mapping:

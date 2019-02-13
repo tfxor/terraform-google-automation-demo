@@ -3,6 +3,26 @@ component:
   name: 'project_iam_member'
   dependsOn:
   - '../project'
+  template:
+    resource:
+      google_project_iam_member:
+          project_iam_member:
+            member: ${var.google_project_member}
+            project: ${local.google_project_id}
+            role: ${var.google_project_role}
+    output:
+      etag:
+          value: ${google_project_iam_member.project_iam_member.etag}
+    provider:
+      google: {}
+    variable:
+      google_project_role:
+          type: string
+      google_project_member:
+          type: string
+    tfvars:
+      google_project_member: demo@mail.com
+      google_project_role: roles/viewer
 
 ci:
   mapping:

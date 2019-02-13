@@ -3,6 +3,38 @@ component:
   name: 'service_account_key'
   dependsOn:
   - '../service_account'
+  template:
+    resource:
+      google_service_account_key:
+          service_account_key:
+            key_algorithm: ${var.google_service_account_key_algorithm}
+            private_key_type: ${var.google_service_account_key_private_key_type}
+            public_key_type: ${var.google_service_account_key_public_key_type}
+            service_account_id: ${local.google_service_account_name}@${local.google_project_id}.iam.gserviceaccount.com
+    output:
+      name:
+          value: ${google_service_account_key.service_account_key.name}
+      public_key:
+          value: ${google_service_account_key.service_account_key.public_key}
+      private_key:
+          value: ${google_service_account_key.service_account_key.private_key}
+      valid_after:
+          value: ${google_service_account_key.service_account_key.valid_after}
+      valid_before:
+          value: ${google_service_account_key.service_account_key.valid_before}
+    provider:
+      google: {}
+    variable:
+      google_service_account_key_algorithm:
+          type: string
+      google_service_account_key_public_key_type:
+          type: string
+      google_service_account_key_private_key_type:
+          type: string
+    tfvars:
+      google_service_account_key_algorithm: KEY_ALG_RSA_2048
+      google_service_account_key_private_key_type: TYPE_GOOGLE_CREDENTIALS_FILE
+      google_service_account_key_public_key_type: TYPE_X509_PEM_FILE
 
 ci:
   mapping:
