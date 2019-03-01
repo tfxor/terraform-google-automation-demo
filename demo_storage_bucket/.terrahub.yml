@@ -8,7 +8,7 @@ component:
         demo_storage_bucket:
           name: 'demo_storage_bucket_${local.project["code"]}'
           location: US
-          project: terrahub-123456
+          project: '${local.google_project_id}'
     output:
       id:
         value: '${google_storage_bucket.demo_storage_bucket.id}'
