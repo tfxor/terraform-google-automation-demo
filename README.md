@@ -113,9 +113,9 @@ Your output should be similar to the one below:
 
 Run the following command in terminal:
 ```shell
-terrahub component -t google_storage_bucket -n demo_storage_bucket && \
-terrahub component -t google_storage_bucket_object -n demo_object -o ../demo_storage_bucket && \
-terrahub component -t google_cloudfunctions_function -n demo_function -o ../demo_object
+terrahub component -t google_storage_bucket -n demo_storage_bucket \
+&& terrahub component -t google_storage_bucket_object -n demo_object -o ../demo_storage_bucket \
+&& terrahub component -t google_cloudfunctions_function -n demo_function -o ../demo_object
 ```
 
 Your output should be similar to the one below:
@@ -249,5 +249,5 @@ Your output should be similar to the one below:
 
 Run the following command in terminal:
 ```
-curl https://us-central1-terrahub-demo-xxxxxxxx.cloudfunctions.net/demofunctionxxxxxxxx
+curl https://us-central1-terrahub-123456.cloudfunctions.net/demofunctionxxxxxxxx
 ```
