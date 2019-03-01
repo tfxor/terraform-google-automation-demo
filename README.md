@@ -204,12 +204,6 @@ terrahub configure -i demo_function -c component.template.variable -D -y
 terrahub configure -i demo_function -c component.template.output -D -y
 terrahub configure -i demo_function -c component.template.output.id.value='${google_cloudfunctions_function.demo_function.id}'
 terrahub configure -i demo_function -c component.template.output.trigger_url.value='${google_cloudfunctions_function.demo_function.https_trigger_url}'
-terrahub configure -i demo_function -c build.env.variables.THUB_LAMBDA_ZIP='demo.zip'
-terrahub configure -i demo_function -c build.env.variables.THUB_BUILD_PATH='../demo_object'
-terrahub configure -i demo_function -c build.env.variables.THUB_BUILD_OK='true'
-terrahub configure -i demo_function -c build.phases.post_build.commands[0]='echo "BUILD: Running post_build step"'
-terrahub configure -i demo_function -c build.phases.post_build.commands[1]='rm ${THUB_BUILD_PATH}/${THUB_LAMBDA_ZIP}'
-terrahub configure -i demo_function -c build.phases.post_build.finally[0]='echo "BUILD: post_build step successful"'
 ```
 
 Your output should be similar to the one below:
@@ -237,9 +231,8 @@ Project: demo-terraform-automation-google
 
 Run the following command in terminal:
 ```shell
-terrahub build -i=demo_object && \
-terrahub run -a -y && \
-terrahub build -i=demo_function
+terrahub build -i demo_object
+terrahub run -a -y
 ```
 
 Your output should be similar to the one below:

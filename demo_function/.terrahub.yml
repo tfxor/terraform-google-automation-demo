@@ -37,16 +37,3 @@ component:
         value: '${google_cloudfunctions_function.demo_function.id}'
       trigger_url:
         value: '${google_cloudfunctions_function.demo_function.https_trigger_url}'
-build:
-  env:
-    variables:
-      THUB_LAMBDA_ZIP: demo.zip
-      THUB_BUILD_PATH: ../demo_object
-      THUB_BUILD_OK: true
-  phases:
-    post_build:
-      commands:
-        - 'echo "BUILD: Running post_build step"'
-        - 'rm ${THUB_BUILD_PATH}/${THUB_LAMBDA_ZIP}'
-      finally:
-        - 'echo "BUILD: post_build step successful"'
