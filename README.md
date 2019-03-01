@@ -91,7 +91,7 @@ Your output should be similar to the one below:
 ```
 Usage: terrahub [command] [options]
 
-terrahub@0.2.2 (built: 2019-02-28T13:32:40.386Z)
+terrahub@0.1.1 (built: 2018-04-07T19:15:39.787Z)
 ```
 
 > NOTE: If you don't have TerraHub CLI, check out this
@@ -127,6 +127,7 @@ Your output should be similar to the one below:
 
 Run the following command in terminal:
 ```shell
+terrahub configure -c terraform.version=0.11.11
 terrahub configure -c template.provider.google={}
 terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}"
 terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
