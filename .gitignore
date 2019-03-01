@@ -6,5 +6,5 @@
 *.tfstate
 *.tfstate.*
 
-# Zipped lambda function
+# Zipped google function
 google_function/demo.*
