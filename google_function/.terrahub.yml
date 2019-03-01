@@ -1,45 +1,45 @@
 component:
-  name: demo_function
+  name: google_function
   mapping:
     - .
   dependsOn:
-    - ../demo_storage_bucket
+    - ../google_storage
   template:
     resource:
       google_cloudfunctions_function:
-        demo_function:
+        google_function:
           name: 'demofunction${local.project["code"]}'
           depends_on:
-            - google_storage_bucket_object.demo_object
+            - google_storage_bucket_object.google_storage_object
           region: us-central1
           runtime: nodejs8
           description: My demo function
           available_memory_mb: 128
           source_archive_bucket: '${data.terraform_remote_state.storage.thub_id}'
-          source_archive_object: '${google_storage_bucket_object.demo_object.name}'
+          source_archive_object: '${google_storage_bucket_object.google_storage_object.name}'
           trigger_http: true
           timeout: 60
           entry_point: helloGET
       google_storage_bucket_object:
-        demo_object:
+        google_storage_object:
           name: demo.zip
           bucket: '${data.terraform_remote_state.storage.thub_id}'
           source: ./demo.zip
     terraform:
       backend:
         local:
-          path: /tmp/.terrahub/local_backend/demo_function/terraform.tfstate
+          path: /tmp/.terrahub/local_backend/google_function/terraform.tfstate
     data:
       terraform_remote_state:
         storage:
           backend: local
           config:
-            path: /tmp/.terrahub/local_backend/demo_storage_bucket/terraform.tfstate
+            path: /tmp/.terrahub/local_backend/google_storage/terraform.tfstate
     output:
       id:
-        value: '${google_cloudfunctions_function.demo_function.id}'
+        value: '${google_cloudfunctions_function.google_function.id}'
       trigger_url:
-        value: '${google_cloudfunctions_function.demo_function.https_trigger_url}'
+        value: '${google_cloudfunctions_function.google_function.https_trigger_url}'
 build:
   env:
     variables:
@@ -59,13 +59,13 @@ build:
         - 'echo "BUILD: Running build step"'
         - >-
           if [ "$(head -n 1 "$THUB_FUNCTION_TXT")" != "$(stat -c %y
-          "${THUB_BUILD_PATH}/index.js")" ]; then zip -j ${THUB_FUNCTION_ZIP}
-          ${THUB_BUILD_PATH}/index.js; fi
+          "${THUB_BUILD_PATH}/demo.js")" ]; then zip -j ${THUB_FUNCTION_ZIP}
+          ${THUB_BUILD_PATH}/demo.js; fi
         - >-
           if [ "$(head -n 1 "$THUB_FUNCTION_TXT")" != "$(stat -c %y
-          "${THUB_BUILD_PATH}/index.js")" ]; then terrahub configure -i
-          demo_function -c
-          component.template.resource.google_storage_bucket_object.demo_object.name=$(date
+          "${THUB_BUILD_PATH}/demo.js")" ]; then terrahub configure -i
+          google_function -c
+          component.template.resource.google_storage_bucket_object.google_storage_object.name=$(date
           +%s).zip; fi
       finally:
         - 'echo "BUILD: build step successful"'
@@ -73,7 +73,7 @@ build:
       commands:
         - 'echo "BUILD: Running post_build step"'
         - >-
-          echo $(stat -c %y "${THUB_BUILD_PATH}/index.js") >
+          echo $(stat -c %y "${THUB_BUILD_PATH}/demo.js") >
           "$THUB_FUNCTION_TXT"
       finally:
         - 'echo "BUILD: post_build step successful"'
