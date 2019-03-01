@@ -1,0 +1,26 @@
+component:
+  name: demo_storage_bucket
+  mapping:
+    - .
+  template:
+    resource:
+      google_storage_bucket:
+        demo_storage_bucket:
+          name: 'demo_storage_bucket_${local.project["code"]}'
+          location: US
+          project: '${local.google_project_id}'
+    output:
+      id:
+        value: '${google_storage_bucket.demo_storage_bucket.id}'
+      thub_id:
+        value: '${google_storage_bucket.demo_storage_bucket.id}'
+      self_link:
+        value: '${google_storage_bucket.demo_storage_bucket.self_link}'
+      project:
+        value: '${google_storage_bucket.demo_storage_bucket.project}'
+      url:
+        value: '${google_storage_bucket.demo_storage_bucket.url}'
+    terraform:
+      backend:
+        local:
+          path: /tmp/.terrahub/local_backend/demo_storage_bucket/terraform.tfstate
