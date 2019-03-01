@@ -1,0 +1,59 @@
+component:
+  name: demo_object
+  mapping:
+    - .
+  dependsOn:
+    - ../demo_storage_bucket
+  template:
+    resource:
+      google_storage_bucket_object:
+        demo_object:
+          bucket: '${data.terraform_remote_state.storage.thub_id}'
+          name: demo.zip
+          source: ./demo.zip
+    output:
+      id:
+        value: '${google_storage_bucket_object.demo_object.id}'
+      thub_id:
+        value: '${google_storage_bucket_object.demo_object.id}'
+      content_type:
+        value: '${google_storage_bucket_object.demo_object.content_type}'
+      md5hash:
+        value: '${google_storage_bucket_object.demo_object.md5hash}'
+      output_name:
+        value: '${google_storage_bucket_object.demo_object.output_name}'
+      crc32c:
+        value: '${google_storage_bucket_object.demo_object.crc32c}'
+      self_link:
+        value: '${google_storage_bucket_object.demo_object.self_link}'
+      storage_class:
+        value: '${google_storage_bucket_object.demo_object.storage_class}'
+    terraform:
+      backend:
+        local:
+          path: /tmp/.terrahub/local_backend/demo_object/terraform.tfstate
+    data:
+      terraform_remote_state:
+        storage:
+          backend: local
+          config:
+            path: /tmp/.terrahub/local_backend/demo_storage_bucket/terraform.tfstate
+build:
+  env:
+    variables:
+      THUB_LAMBDA_ZIP: demo.zip
+      THUB_BUILD_PATH: ..
+      THUB_BUILD_OK: true
+  phases:
+    build:
+      commands:
+        - 'echo "BUILD: Running build step"'
+        - 'zip -j ${THUB_LAMBDA_ZIP} ${THUB_BUILD_PATH}/index.js'
+      finally:
+        - 'echo "BUILD: build step successful"'
+    post_build:
+      commands:
+        - 'echo "BUILD: Running post_build step"'
+        - rm -rf ./nodejs-docs-samples
+      finally:
+        - 'echo "BUILD: post_build step successful"'

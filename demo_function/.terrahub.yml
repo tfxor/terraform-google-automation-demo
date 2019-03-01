@@ -1,0 +1,52 @@
+component:
+  name: demo_function
+  mapping:
+    - .
+  dependsOn:
+    - ../demo_object
+  template:
+    resource:
+      google_cloudfunctions_function:
+        demo_function:
+          name: 'demofunction${local.project["code"]}'
+          region: us-central1
+          runtime: nodejs8
+          description: 'My demo function ${data.terraform_remote_state.object.md5hash}'
+          available_memory_mb: 128
+          source_archive_bucket: '${data.terraform_remote_state.storage.thub_id}'
+          source_archive_object: '${data.terraform_remote_state.object.output_name}'
+          trigger_http: true
+          timeout: 60
+          entry_point: helloGET
+    terraform:
+      backend:
+        local:
+          path: /tmp/.terrahub/local_backend/demo_function/terraform.tfstate
+    data:
+      terraform_remote_state:
+        storage:
+          backend: local
+          config:
+            path: /tmp/.terrahub/local_backend/demo_storage_bucket/terraform.tfstate
+        object:
+          backend: local
+          config:
+            path: /tmp/.terrahub/local_backend/demo_object/terraform.tfstate
+    output:
+      id:
+        value: '${google_cloudfunctions_function.demo_function.id}'
+      trigger_url:
+        value: '${google_cloudfunctions_function.demo_function.https_trigger_url}'
+build:
+  env:
+    variables:
+      THUB_LAMBDA_ZIP: demo.zip
+      THUB_BUILD_PATH: ../demo_object
+      THUB_BUILD_OK: true
+  phases:
+    post_build:
+      commands:
+        - 'echo "BUILD: Running post_build step"'
+        - 'rm ${THUB_BUILD_PATH}/${THUB_LAMBDA_ZIP}'
+      finally:
+        - 'echo "BUILD: post_build step successful"'

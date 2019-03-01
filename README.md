@@ -16,23 +16,11 @@ Manual Setup (set values in double quotes and run the following command in termi
 ```shell
 export GOOGLE_CLOUD_PROJECT=""            ## e.g. terrahub-123456
 export GOOGLE_APPLICATION_CREDENTIALS=""  ## e.g. ${HOME}/.config/gcloud/terraform.json
-export ORG_ID=""        ## e.g. 123456789012
 export BILLING_ID=""    ## e.g. 123456-ABCDEF-ZYXWVU
 export PROJECT_NAME=""  ## e.g. TerraHub
 export IAM_NAME=""      ## e.g. terraform
 export IAM_DESC=""      ## e.g. terraform service account
 ```
-
-### Setup ORG_ID Programmatically
-
-Automated Setup (run the following command in terminal):
-```shell
-export ORG_ID="$(gcloud organizations list --format=json | jq '.[0].name[14:]')"
-```
-
-> NOTE: If you don't have JQ CLI, check out this
-[installation guide](https://stedolan.github.io/jq/download/)
-
 ### Setup BILLING_ID Programmatically
 
 Automated Setup (run the following command in terminal):
@@ -49,18 +37,15 @@ Run the following command in terminal:
 ```shell
 gcloud projects create ${GOOGLE_CLOUD_PROJECT} \
   --name="${PROJECT_NAME}" \
-  --organization="${ORG_ID}" \
   --set-as-default
 
-gcloud config set project ${GOOGLE_CLOUD_PROJECT}
+gcloud beta billing projects link ${GOOGLE_CLOUD_PROJECT} \
+  --billing-account="${BILLING_ID}"
 
 gcloud services enable cloudresourcemanager.googleapis.com
 gcloud services enable cloudbilling.googleapis.com
 gcloud services enable iam.googleapis.com
-gcloud services enable compute.googleapis.com
-
-gcloud beta billing projects link ${GOOGLE_CLOUD_PROJECT} \
-  --billing-account="${BILLING_ID}"
+gcloud services enable cloudfunctions.googleapis.com
 ```
 
 Your output should be similar to the one below:
@@ -95,23 +80,6 @@ Your output should be similar to the one below:
 ```
 ```
 
-## Add IAM Policy Binding to Google Cloud Organization
-
-Run the following command in terminal:
-```shell
-gcloud organizations add-iam-policy-binding ${ORG_ID} \
-  --member="serviceAccount:${IAM_NAME}@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com" \
-  --role="roles/resourcemanager.projectCreator"
-
-gcloud organizations add-iam-policy-binding ${ORG_ID} \
-  --member="serviceAccount:${IAM_NAME}@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com" \
-  --role="roles/billing.user"
-```
-
-Your output should be similar to the one below:
-```
-```
-
 ## Create Terraform Configurations Using TerraHub
 
 Run the following commands in terminal:
@@ -123,7 +91,7 @@ Your output should be similar to the one below:
 ```
 Usage: terrahub [command] [options]
 
-terrahub@0.1.28 (built: 2019-02-08T17:17:41.912Z)
+terrahub@0.2.2 (built: 2019-02-28T13:32:40.386Z)
 ```
 
 > NOTE: If you don't have TerraHub CLI, check out this
@@ -131,9 +99,9 @@ terrahub@0.1.28 (built: 2019-02-08T17:17:41.912Z)
 
 Run the following command in terminal:
 ```shell
-mkdir demo-terraform-google
-cd demo-terraform-google
-terrahub project -n demo-terraform-google
+mkdir demo-terraform-automation-google
+cd demo-terraform-automation-google
+terrahub project -n demo-terraform-automation-google
 ```
 
 Your output should be similar to the one below:
@@ -141,16 +109,106 @@ Your output should be similar to the one below:
 ✅ Project successfully initialized
 ```
 
-## Create TerraHub Components
+## Create TerraHub Components from Templates
 
 Run the following command in terminal:
 ```shell
-terrahub component -t google_project -n project
-terrahub component -t google_service_account -n service_account -o ../project
-terrahub component -t google_service_account_key -n service_account_key -o ../service_account
-terrahub component -t google_project_iam_member -n project_iam_member -o ../project
-terrahub component -t google_project_iam_binding -n project_iam_policy_binding_storage_admin -o ../project_iam_member
-terrahub component -t google_project_iam_binding -n project_iam_policy_binding_compute_admin -o ../project_iam_member
+terrahub component -t google_storage_bucket -n demo_storage_bucket && \
+terrahub component -t google_storage_bucket_object -n demo_object -o ../demo_storage_bucket && \
+terrahub component -t google_cloudfunctions_function -n demo_function -o ../demo_object
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Update Project Config
+
+Run the following command in terminal:
+```shell
+terrahub configure -c template.provider.google={}
+terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}"
+terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Customize TerraHub Component for Storage Bucket
+
+Run the following command in terminal:
+```shell
+terrahub configure -i demo_storage_bucket -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/demo_storage_bucket/terraform.tfstate'
+terrahub configure -i demo_storage_bucket -c component.template.resource.google_storage_bucket.demo_storage_bucket.name='demo_storage_bucket_${local.project["code"]}'
+terrahub configure -i demo_storage_bucket -c component.template.resource.google_storage_bucket.demo_storage_bucket.location='US'
+terrahub configure -i demo_storage_bucket -c component.template.resource.google_storage_bucket.demo_storage_bucket.project="${GOOGLE_CLOUD_PROJECT}"
+terrahub configure -i demo_storage_bucket -c component.template.variable -D -y
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Customize TerraHub Component for Storage Bucket Object
+
+Run the following command in terminal:
+```shell
+terrahub configure -i demo_object -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/demo_object/terraform.tfstate'
+terrahub configure -i demo_object -c component.template.data.terraform_remote_state.storage.backend='local'
+terrahub configure -i demo_object -c component.template.data.terraform_remote_state.storage.config.path='/tmp/.terrahub/local_backend/demo_storage_bucket/terraform.tfstate'
+terrahub configure -i demo_object -c component.template.resource.google_storage_bucket_object.demo_object.name='demo.zip'
+terrahub configure -i demo_object -c component.template.resource.google_storage_bucket_object.demo_object.bucket='${data.terraform_remote_state.storage.thub_id}'
+terrahub configure -i demo_object -c component.template.resource.google_storage_bucket_object.demo_object.source='./demo.zip'
+terrahub configure -i demo_object -c component.template.variable -D -y
+terrahub configure -i demo_object -c build.env.variables.THUB_LAMBDA_ZIP='demo.zip'
+terrahub configure -i demo_object -c build.env.variables.THUB_BUILD_PATH='..'
+terrahub configure -i demo_object -c build.env.variables.THUB_BUILD_OK='true'
+terrahub configure -i demo_object -c build.phases.build.commands[0]='echo "BUILD: Running build step"'
+terrahub configure -i demo_object -c build.phases.build.commands[1]='zip -j ${THUB_LAMBDA_ZIP} ${THUB_BUILD_PATH}/index.js'
+terrahub configure -i demo_object -c build.phases.build.finally[0]='echo "BUILD: build step successful"'
+terrahub configure -i demo_object -c build.phases.post_build.commands[0]='echo "BUILD: Running post_build step"'
+terrahub configure -i demo_object -c build.phases.post_build.commands[1]='rm -rf ./nodejs-docs-samples'
+terrahub configure -i demo_object -c build.phases.post_build.finally[0]='echo "BUILD: post_build step successful"'
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Customize TerraHub Component for Google Cloud Function
+
+Run the following command in terminal:
+```shell
+terrahub configure -i demo_function -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/demo_function/terraform.tfstate'
+terrahub configure -i demo_function -c component.template.data.terraform_remote_state.storage.backend='local'
+terrahub configure -i demo_function -c component.template.data.terraform_remote_state.storage.config.path='/tmp/.terrahub/local_backend/demo_storage_bucket/terraform.tfstate'
+terrahub configure -i demo_function -c component.template.data.terraform_remote_state.object.backend='local'
+terrahub configure -i demo_function -c component.template.data.terraform_remote_state.object.config.path='/tmp/.terrahub/local_backend/demo_object/terraform.tfstate'
+terrahub configure -i demo_function -c component.template.resource.google_cloudfunctions_function.demo_function.name='demofunction${local.project["code"]}'
+terrahub configure -i demo_function -c component.template.resource.google_cloudfunctions_function.demo_function.region='us-central1'
+terrahub configure -i demo_function -c component.template.resource.google_cloudfunctions_function.demo_function.runtime='nodejs8'
+terrahub configure -i demo_function -c component.template.resource.google_cloudfunctions_function.demo_function.description='My demo function ${data.terraform_remote_state.object.md5hash}'
+terrahub configure -i demo_function -c component.template.resource.google_cloudfunctions_function.demo_function.available_memory_mb=128
+terrahub configure -i demo_function -c component.template.resource.google_cloudfunctions_function.demo_function.source_archive_bucket='${data.terraform_remote_state.storage.thub_id}'
+terrahub configure -i demo_function -c component.template.resource.google_cloudfunctions_function.demo_function.source_archive_object='${data.terraform_remote_state.object.output_name}'
+terrahub configure -i demo_function -c component.template.resource.google_cloudfunctions_function.demo_function.trigger_http=true
+terrahub configure -i demo_function -c component.template.resource.google_cloudfunctions_function.demo_function.timeout=60
+terrahub configure -i demo_function -c component.template.resource.google_cloudfunctions_function.demo_function.entry_point='helloGET'
+terrahub configure -i demo_function -c component.template.variable -D -y
+terrahub configure -i demo_function -c component.template.output -D -y
+terrahub configure -i demo_function -c component.template.output.id.value='${google_cloudfunctions_function.demo_function.id}'
+terrahub configure -i demo_function -c component.template.output.trigger_url.value='${google_cloudfunctions_function.demo_function.https_trigger_url}'
+terrahub configure -i demo_function -c build.env.variables.THUB_LAMBDA_ZIP='demo.zip'
+terrahub configure -i demo_function -c build.env.variables.THUB_BUILD_PATH='../demo_object'
+terrahub configure -i demo_function -c build.env.variables.THUB_BUILD_OK='true'
+terrahub configure -i demo_function -c build.phases.post_build.commands[0]='echo "BUILD: Running post_build step"'
+terrahub configure -i demo_function -c build.phases.post_build.commands[1]='rm ${THUB_BUILD_PATH}/${THUB_LAMBDA_ZIP}'
+terrahub configure -i demo_function -c build.phases.post_build.finally[0]='echo "BUILD: post_build step successful"'
 ```
 
 Your output should be similar to the one below:
@@ -167,36 +225,29 @@ terrahub graph
 
 Your output should be similar to the one below:
 ```
-Project: demo-terraform-google
- └─ project [path: ./project]
-    ├─ project_iam_member [path: ./project_iam_member]
-    │  ├─ project_iam_binding_compute_admin [path: ./project_iam_binding_compute_admin]
-    │  └─ project_iam_binding_storage_admin [path: ./project_iam_binding_storage_admin]
-    └─ service_account [path: ./service_account]
-       └─ service_account_key [path: ./service_account_key]
+Project: demo-terraform-automation-google
+ └─ demo_storage_bucket_7b3c5d2c [path: ./demo_storage_bucket_7b3c5d2c]
+    └─ demo_object_7b3c5d2c [path: ./demo_object_7b3c5d2c]
+       └─ demo_function_7b3c5d2c [path: ./demo_function_7b3c5d2c]
 ```
 
-## Update Project Config
-
-Run the following command in terminal:
-```shell
-terrahub configure -c template.locals.google_org_id="${ORG_ID}"
-terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
-terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}"
-```
-
-Your output should be similar to the one below:
-```
-✅ Done
-```
 
 ## Run TerraHub Automation
 
 Run the following command in terminal:
 ```shell
-terrahub run -a -y
+terrahub build -i=demo_object && \
+terrahub run -a -y && \
+terrahub build -i=demo_function
 ```
 
 Your output should be similar to the one below:
 ```
+```
+
+## Run Test Command
+
+Run the following command in terminal:
+```
+curl https://us-central1-terrahub-demo-xxxxxxxx.cloudfunctions.net/demofunctionxxxxxxxx
 ```
