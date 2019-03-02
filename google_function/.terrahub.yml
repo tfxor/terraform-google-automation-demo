@@ -59,11 +59,11 @@ build:
         - 'echo "BUILD: Running build step"'
         - >-
           if [ "$(head -n 1 "$THUB_FUNCTION_TXT")" != "$(stat -c %y
-          "${THUB_BUILD_PATH}/demo.js")" ]; then zip -j ${THUB_FUNCTION_ZIP}
-          ${THUB_BUILD_PATH}/demo.js; fi
+          "${THUB_BUILD_PATH}/index.js")" ]; then zip -j ${THUB_FUNCTION_ZIP}
+          ${THUB_BUILD_PATH}/index.js; fi
         - >-
           if [ "$(head -n 1 "$THUB_FUNCTION_TXT")" != "$(stat -c %y
-          "${THUB_BUILD_PATH}/demo.js")" ]; then terrahub configure -i
+          "${THUB_BUILD_PATH}/index.js")" ]; then terrahub configure -i
           google_function -c
           component.template.resource.google_storage_bucket_object.google_storage_object.name=$(date
           +%s).zip; fi
@@ -73,7 +73,7 @@ build:
       commands:
         - 'echo "BUILD: Running post_build step"'
         - >-
-          echo $(stat -c %y "${THUB_BUILD_PATH}/demo.js") >
+          echo $(stat -c %y "${THUB_BUILD_PATH}/index.js") >
           "$THUB_FUNCTION_TXT"
       finally:
         - 'echo "BUILD: post_build step successful"'

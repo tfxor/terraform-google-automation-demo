@@ -186,11 +186,11 @@ terrahub configure -i google_function -c build.phases.pre_build.commands[0]='ech
 terrahub configure -i google_function -c build.phases.pre_build.commands[1]='if [ ! -e "$THUB_FUNCTION_TXT" ]; then touch "$THUB_FUNCTION_TXT"; fi'
 terrahub configure -i google_function -c build.phases.pre_build.finally[0]='echo "BUILD: pre_build step successful"'
 terrahub configure -i google_function -c build.phases.build.commands[0]='echo "BUILD: Running build step"'
-terrahub configure -i google_function -c build.phases.build.commands[1]='if [ "$(head -n 1 "$THUB_FUNCTION_TXT")" != "$(stat -c %y "${THUB_BUILD_PATH}/demo.js")" ]; then zip -j ${THUB_FUNCTION_ZIP} ${THUB_BUILD_PATH}/demo.js; fi'
-terrahub configure -i google_function -c build.phases.build.commands[2]='if [ "$(head -n 1 "$THUB_FUNCTION_TXT")" != "$(stat -c %y "${THUB_BUILD_PATH}/demo.js")" ]; then terrahub configure -i google_function -c component.template.resource.google_storage_bucket_object.google_storage_object.name=$(date +%s).zip; fi'
+terrahub configure -i google_function -c build.phases.build.commands[1]='if [ "$(head -n 1 "$THUB_FUNCTION_TXT")" != "$(stat -c %y "${THUB_BUILD_PATH}/index.js")" ]; then zip -j ${THUB_FUNCTION_ZIP} ${THUB_BUILD_PATH}/index.js; fi'
+terrahub configure -i google_function -c build.phases.build.commands[2]='if [ "$(head -n 1 "$THUB_FUNCTION_TXT")" != "$(stat -c %y "${THUB_BUILD_PATH}/index.js")" ]; then terrahub configure -i google_function -c component.template.resource.google_storage_bucket_object.google_storage_object.name=$(date +%s).zip; fi'
 terrahub configure -i google_function -c build.phases.build.finally[0]='echo "BUILD: build step successful"'
 terrahub configure -i google_function -c build.phases.post_build.commands[0]='echo "BUILD: Running post_build step"'
-terrahub configure -i google_function -c build.phases.post_build.commands[1]='echo $(stat -c %y "${THUB_BUILD_PATH}/demo.js") > "$THUB_FUNCTION_TXT"'
+terrahub configure -i google_function -c build.phases.post_build.commands[1]='echo $(stat -c %y "${THUB_BUILD_PATH}/index.js") > "$THUB_FUNCTION_TXT"'
 terrahub configure -i google_function -c build.phases.post_build.finally[0]='echo "BUILD: post_build step successful"'
 ```
 
