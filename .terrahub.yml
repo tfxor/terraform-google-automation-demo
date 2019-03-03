@@ -1,23 +1,19 @@
-## project config
 project:
   name: demo-terraform-automation-google
-  code: f2754a99
-  include: ['.']
-  exclude: ['**/.terraform/*', '**/node_modules/*']
-
-## template config
+  code: 7b3c5d2c
+  include:
+    - .
+  exclude:
+    - '**/.terraform/**'
+    - '**/node_modules/**'
+    - '**/.git/**'
+terraform:
+  varFile:
+    - default.tfvars
+  version: 0.11.11
 template:
   provider:
     google: {}
   locals:
-    google_project_id: project-123456789012
-    google_region: us-central1
-    google_org_id: 123456789012
-    google_service_account_name: demo-team
+    google_project_id: terrahub-123456
     google_billing_account: 123456-ABCDEF-ZYXWVU
-    google_location_id: us-central
-
-## terraform config
-terraform:
-  varFile: ['default.tfvars']    
-  version: 0.11.7

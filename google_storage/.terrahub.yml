@@ -1,0 +1,26 @@
+component:
+  name: google_storage
+  mapping:
+    - .
+  template:
+    resource:
+      google_storage_bucket:
+        google_storage:
+          name: 'demo_terraform_automation_${local.project["code"]}'
+          location: US
+          project: '${local.google_project_id}'
+    output:
+      id:
+        value: '${google_storage_bucket.google_storage.id}'
+      thub_id:
+        value: '${google_storage_bucket.google_storage.id}'
+      self_link:
+        value: '${google_storage_bucket.google_storage.self_link}'
+      project:
+        value: '${google_storage_bucket.google_storage.project}'
+      url:
+        value: '${google_storage_bucket.google_storage.url}'
+    terraform:
+      backend:
+        local:
+          path: /tmp/.terrahub/local_backend/google_storage/terraform.tfstate
