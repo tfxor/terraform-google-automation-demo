@@ -16,10 +16,11 @@ Manual Setup (set values in double quotes and run the following command in termi
 ```shell
 export GOOGLE_CLOUD_PROJECT=""            ## e.g. terrahub-123456
 export GOOGLE_APPLICATION_CREDENTIALS=""  ## e.g. ${HOME}/.config/gcloud/terraform.json
-export BILLING_ID=""    ## e.g. 123456-ABCDEF-ZYXWVU
-export PROJECT_NAME=""  ## e.g. TerraHub
-export IAM_NAME=""      ## e.g. terraform
-export IAM_DESC=""      ## e.g. terraform service account
+export BILLING_ID=""      ## e.g. 123456-ABCDEF-ZYXWVU
+export PROJECT_NAME=""    ## e.g. TerraHub
+export IAM_NAME=""        ## e.g. terraform
+export IAM_DESC=""        ## e.g. terraform service account
+export STORAGE_BUCKET=""  ## e.g. terrahub_bucket_123456
 ```
 ### Setup BILLING_ID Programmatically
 
@@ -142,8 +143,9 @@ Your output should be similar to the one below:
 Run the following command in terminal:
 ```shell
 terrahub configure -i google_storage -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_storage/terraform.tfstate'
-terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.name='demo_terraform_automation_${local.project["code"]}'
+terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.name="${STORAGE_BUCKET}"
 terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.location='US'
+terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.force_destroy='true'
 terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.project='${local.google_project_id}'
 terrahub configure -i google_storage -c component.template.variable -D -y
 ```
@@ -179,18 +181,25 @@ terrahub configure -i google_function -c component.template.output -D -y
 terrahub configure -i google_function -c component.template.output.id.value='${google_cloudfunctions_function.google_function.id}'
 terrahub configure -i google_function -c component.template.output.trigger_url.value='${google_cloudfunctions_function.google_function.https_trigger_url}'
 terrahub configure -i google_function -c build.env.variables.THUB_FUNCTION_ZIP='demo.zip'
-terrahub configure -i google_function -c build.env.variables.THUB_BUILD_PATH='..'
 terrahub configure -i google_function -c build.env.variables.THUB_FUNCTION_TXT='demo.txt'
-terrahub configure -i google_function -c build.env.variables.THUB_BUILD_OK='true'
+terrahub configure -i google_function -c build.env.variables.COMPONENT_NAME='google_function'
+terrahub configure -i google_function -c build.env.variables.OBJECT_NAME='google_storage_object'
+terrahub configure -i google_function -c build.env.variables.THUB_BUILD_PATH='..'
+terrahub configure -i google_function -c build.env.variables.THUB_BUILD_OK='false'
+terrahub configure -i google_function -c build.env.variables.THUB_BUCKET_PATH="gs://${STORAGE_BUCKET}"
+terrahub configure -i google_function -c build.env.variables.THUB_BUCKET_KEY='deploy/google_function'
 terrahub configure -i google_function -c build.phases.pre_build.commands[0]='echo "BUILD: Running pre_build step"'
-terrahub configure -i google_function -c build.phases.pre_build.commands[1]='if [ ! -e "$THUB_FUNCTION_TXT" ]; then touch "$THUB_FUNCTION_TXT"; fi'
+terrahub configure -i google_function -c build.phases.pre_build.commands[1]='./scripts/download.sh $THUB_FUNCTION_TXT $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT'
+terrahub configure -i google_function -c build.phases.pre_build.commands[2]='./scripts/compare.sh $THUB_FUNCTION_TXT $THUB_BUILD_PATH/*.js'
 terrahub configure -i google_function -c build.phases.pre_build.finally[0]='echo "BUILD: pre_build step successful"'
 terrahub configure -i google_function -c build.phases.build.commands[0]='echo "BUILD: Running build step"'
-terrahub configure -i google_function -c build.phases.build.commands[1]='if [ "$(head -n 1 "$THUB_FUNCTION_TXT")" != "$(stat -c %y "${THUB_BUILD_PATH}/index.js")" ]; then zip -j ${THUB_FUNCTION_ZIP} ${THUB_BUILD_PATH}/index.js; fi'
-terrahub configure -i google_function -c build.phases.build.commands[2]='if [ "$(head -n 1 "$THUB_FUNCTION_TXT")" != "$(stat -c %y "${THUB_BUILD_PATH}/index.js")" ]; then terrahub configure -i google_function -c component.template.resource.google_storage_bucket_object.google_storage_object.name=$(date +%s).zip; fi'
+terrahub configure -i google_function -c build.phases.build.commands[1]='./scripts/build.sh $COMPONENT_NAME $OBJECT_NAME $THUB_BUCKET_KEY/'
 terrahub configure -i google_function -c build.phases.build.finally[0]='echo "BUILD: build step successful"'
 terrahub configure -i google_function -c build.phases.post_build.commands[0]='echo "BUILD: Running post_build step"'
-terrahub configure -i google_function -c build.phases.post_build.commands[1]='echo $(stat -c %y "${THUB_BUILD_PATH}/index.js") > "$THUB_FUNCTION_TXT"'
+terrahub configure -i google_function -c build.phases.post_build.commands[1]='./scripts/shasum.sh $THUB_FUNCTION_TXT'
+terrahub configure -i google_function -c build.phases.post_build.commands[2]='./scripts/zip.sh $THUB_FUNCTION_ZIP $THUB_BUILD_PATH/*.js'
+terrahub configure -i google_function -c build.phases.post_build.commands[3]='./scripts/upload.sh $THUB_FUNCTION_TXT $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT'
+terrahub configure -i google_function -c build.phases.post_build.commands[4]='rm -f .terrahub_build.env $THUB_FUNCTION_TXT'
 terrahub configure -i google_function -c build.phases.post_build.finally[0]='echo "BUILD: post_build step successful"'
 ```
 
@@ -218,6 +227,7 @@ Project: demo-terraform-automation-google
 
 Run the following command in terminal:
 ```shell
+terrahub run -a -y -i google_storage
 terrahub build -i google_function
 terrahub run -a -y
 ```

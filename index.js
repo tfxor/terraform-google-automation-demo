@@ -1,3 +1,3 @@
 exports.helloGET = (req, res) => {
-    res.send('Hello World!');
+    res.send("Hello World!\n");
 };

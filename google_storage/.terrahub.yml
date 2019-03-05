@@ -6,8 +6,9 @@ component:
     resource:
       google_storage_bucket:
         google_storage:
-          name: 'demo_terraform_automation_${local.project["code"]}'
+          name: terrahub_bucket_123456
           location: US
+          force_destroy: true
           project: '${local.google_project_id}'
     output:
       id:
