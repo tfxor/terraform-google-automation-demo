@@ -5,26 +5,6 @@ component:
   dependsOn:
     - ../demo_storage_bucket
   template:
-    resource:
-      google_cloudfunctions_function:
-        demo_function:
-          name: 'demofunction${local.project["code"]}'
-          depends_on:
-            - google_storage_bucket_object.demo_object
-          region: us-central1
-          runtime: nodejs8
-          description: My demo function
-          available_memory_mb: 128
-          source_archive_bucket: '${data.terraform_remote_state.storage.thub_id}'
-          source_archive_object: '${google_storage_bucket_object.demo_object.name}'
-          trigger_http: true
-          timeout: 60
-          entry_point: helloGET
-      google_storage_bucket_object:
-        demo_object:
-          name: deploy/demo_function/1551778012.zip
-          bucket: '${data.terraform_remote_state.storage.thub_id}'
-          source: ./demo.zip
     terraform:
       backend:
         local:
@@ -35,6 +15,26 @@ component:
           backend: local
           config:
             path: /tmp/.terrahub/local_backend/demo_storage_bucket/terraform.tfstate
+    resource:
+      google_storage_bucket_object:
+        demo_object:
+          name: deploy/demo_function/1551790491.zip
+          bucket: '${data.terraform_remote_state.storage.thub_id}'
+          source: ./demo.zip
+      google_cloudfunctions_function:
+        demo_function:
+          depends_on:
+            - google_storage_bucket_object.demo_object
+          name: 'demofunction${local.project["code"]}'
+          region: us-central1
+          runtime: nodejs8
+          description: My demo function
+          available_memory_mb: 128
+          source_archive_bucket: '${data.terraform_remote_state.storage.thub_id}'
+          source_archive_object: '${google_storage_bucket_object.demo_object.name}'
+          trigger_http: true
+          timeout: 60
+          entry_point: helloGET
     output:
       id:
         value: '${google_cloudfunctions_function.demo_function.id}'
@@ -48,8 +48,8 @@ build:
       COMPONENT_NAME: demo_function
       OBJECT_NAME: demo_object
       THUB_BUILD_PATH: ..
-      THUB_BUILD_OK: 'false'
-      THUB_BUCKET_PATH: 'gs://demo_storage_bucket_7b3c5d2c'
+      THUB_BUILD_OK: false
+      THUB_BUCKET_PATH: 'gs://demo_storage_bucket_99999999'
       THUB_BUCKET_KEY: deploy/demo_function
   phases:
     pre_build:
