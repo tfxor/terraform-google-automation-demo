@@ -115,7 +115,8 @@ Your output should be similar to the one below:
 Run the following command in terminal:
 ```shell
 terrahub component -t google_storage_bucket -n google_storage \
-&& terrahub component -t google_cloudfunctions_function -n google_function -o ../google_storage
+&& terrahub component -t google_cloudfunctions_function -n google_function -o ../google_storage \
+&& terrahub component -t google_storage_bucket -n google_static_website
 ```
 
 Your output should be similar to the one below:
@@ -201,6 +202,26 @@ terrahub configure -i google_function -c build.phases.post_build.commands[2]='./
 terrahub configure -i google_function -c build.phases.post_build.commands[3]='./scripts/upload.sh $THUB_FUNCTION_TXT $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT'
 terrahub configure -i google_function -c build.phases.post_build.commands[4]='rm -f .terrahub_build.env $THUB_FUNCTION_TXT'
 terrahub configure -i google_function -c build.phases.post_build.finally[0]='echo "BUILD: post_build step successful"'
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Customize TerraHub Component for Google Cloud Static WebSite
+
+Run the following command in terminal:
+```shell
+git clone https://github.com/TerraHubCorp/www.git
+terrahub configure -i google_static_website -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_static_website/terraform.tfstate'
+terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.name="${GOOGLE_STORAGE_BUCKET}_website"
+terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.location='US'
+terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.force_destroy='true'
+terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.project='${local.google_project_id}'
+terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.website.main_page_suffix='index.html'
+terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.website.not_found_page='/404.html'
+terrahub configure -i google_static_website -c component.template.variable -D -y
 ```
 
 Your output should be similar to the one below:

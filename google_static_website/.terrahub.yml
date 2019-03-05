@@ -1,0 +1,30 @@
+component:
+  name: google_static_website
+  mapping:
+    - .
+  template:
+    resource:
+      google_storage_bucket:
+        google_static_website:
+          name: terrahub_bucket_123456_website
+          location: US
+          force_destroy: true
+          project: '${local.google_project_id}'
+          website:
+            main_page_suffix: index.html
+            not_found_page: /404.html
+    output:
+      id:
+        value: '${google_storage_bucket.google_static_website.id}'
+      thub_id:
+        value: '${google_storage_bucket.google_static_website.id}'
+      self_link:
+        value: '${google_storage_bucket.google_static_website.self_link}'
+      project:
+        value: '${google_storage_bucket.google_static_website.project}'
+      url:
+        value: '${google_storage_bucket.google_static_website.url}'
+    terraform:
+      backend:
+        local:
+          path: /tmp/.terrahub/local_backend/google_static_website/terraform.tfstate
