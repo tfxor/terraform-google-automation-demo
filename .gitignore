@@ -1,5 +1,10 @@
-#  Local .terraform directories
+#  Local hidden directories
 **/.terraform/*
+**/.backup/*
 
-# .tfstate files
-**/*.tf*
+# Local .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Zipped google function
+google_function/demo.*

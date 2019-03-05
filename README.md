@@ -217,8 +217,8 @@ terrahub graph
 Your output should be similar to the one below:
 ```
 Project: demo-terraform-automation-google
- └─ google_storage_7b3c5d2c [path: ./google_storage_7b3c5d2c]
-    └─ google_function_7b3c5d2c [path: ./google_function_7b3c5d2c]
+ └─ google_storage [path: ./google_storage]
+    └─ google_function [path: ./google_function]
 ```
 
 
