@@ -16,11 +16,11 @@ Manual Setup (set values in double quotes and run the following command in termi
 ```shell
 export GOOGLE_CLOUD_PROJECT=""            ## e.g. terrahub-123456
 export GOOGLE_APPLICATION_CREDENTIALS=""  ## e.g. ${HOME}/.config/gcloud/terraform.json
-export BILLING_ID=""    ## e.g. 123456-ABCDEF-ZYXWVU
-export PROJECT_NAME=""  ## e.g. TerraHub
-export IAM_NAME=""      ## e.g. terraform
-export IAM_DESC=""      ## e.g. terraform service account
-export GOOGLE_STORAGE_BUCKET=""      ## e.g. terrahub_bucket_123456
+export BILLING_ID=""      ## e.g. 123456-ABCDEF-ZYXWVU
+export PROJECT_NAME=""    ## e.g. TerraHub
+export IAM_NAME=""        ## e.g. terraform
+export IAM_DESC=""        ## e.g. terraform service account
+export STORAGE_BUCKET=""  ## e.g. terrahub_bucket_123456
 ```
 ### Setup BILLING_ID Programmatically
 
@@ -151,7 +151,7 @@ Your output should be similar to the one below:
 Run the following command in terminal:
 ```shell
 terrahub configure -i google_storage -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_storage/terraform.tfstate'
-terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.name="${GOOGLE_STORAGE_BUCKET}"
+terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.name="${STORAGE_BUCKET}"
 terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.location='US'
 terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.force_destroy='true'
 terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.project='${local.google_project_id}'
@@ -194,7 +194,7 @@ terrahub configure -i google_function -c build.env.variables.COMPONENT_NAME='goo
 terrahub configure -i google_function -c build.env.variables.OBJECT_NAME='google_storage_object'
 terrahub configure -i google_function -c build.env.variables.THUB_BUILD_PATH='..'
 terrahub configure -i google_function -c build.env.variables.THUB_BUILD_OK='false'
-terrahub configure -i google_function -c build.env.variables.THUB_BUCKET_PATH="gs://${GOOGLE_STORAGE_BUCKET}"
+terrahub configure -i google_function -c build.env.variables.THUB_BUCKET_PATH="gs://${STORAGE_BUCKET}"
 terrahub configure -i google_function -c build.env.variables.THUB_BUCKET_KEY='deploy/google_function'
 terrahub configure -i google_function -c build.phases.pre_build.commands[0]='echo "BUILD: Running pre_build step"'
 terrahub configure -i google_function -c build.phases.pre_build.commands[1]='./scripts/download.sh $THUB_FUNCTION_TXT $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT'
