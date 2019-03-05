@@ -9,6 +9,7 @@ component:
           name: 'demo_storage_bucket_${local.project["code"]}'
           location: US
           project: '${local.google_project_id}'
+          force_destroy: 'true'
     output:
       id:
         value: '${google_storage_bucket.demo_storage_bucket.id}'
