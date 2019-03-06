@@ -47,6 +47,7 @@ gcloud services enable cloudresourcemanager.googleapis.com
 gcloud services enable cloudbilling.googleapis.com
 gcloud services enable iam.googleapis.com
 gcloud services enable cloudfunctions.googleapis.com
+gcloud services enable storage-component.googleapis.com
 ```
 
 Your output should be similar to the one below:
@@ -221,7 +222,7 @@ Your output should be similar to the one below:
 Run the following command in terminal:
 ```shell
 terrahub configure -i google_static_website -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_static_website/terraform.tfstate'
-terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.name="${GOOGLE_STORAGE_BUCKET}_website"
+terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.name="${STORAGE_BUCKET}_website"
 terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.location='US'
 terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.force_destroy='true'
 terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.project='${local.google_project_id}'
@@ -230,7 +231,7 @@ terrahub configure -i google_static_website -c component.template.resource.googl
 terrahub configure -i google_static_website -c component.template.variable -D -y
 terrahub configure -i google_static_website -c build.env.variables.THUB_ENV='dev'
 terrahub configure -i google_static_website -c build.env.variables.THUB_INDEX_FILE='www.txt'
-terrahub configure -i google_static_website -c build.env.variables.THUB_S3_PATH="gs://${GOOGLE_STORAGE_BUCKET}_website"
+terrahub configure -i google_static_website -c build.env.variables.THUB_S3_PATH="gs://${STORAGE_BUCKET}_website"
 terrahub configure -i google_static_website -c build.env.variables.THUB_ROBOTS='../../robots.dev.txt'
 terrahub configure -i google_static_website -c build.env.variables.THUB_BUILD_PATH='../../build'
 terrahub configure -i google_static_website -c build.env.variables.THUB_SOURCE_PATH='../../assets ../../static/fonts ../../static/img ../../views'
@@ -262,7 +263,7 @@ Run the following command in terminal:
 terrahub configure -i iam_member_object_viewer -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/iam_member_object_viewer/terraform.tfstate'
 terrahub configure -i iam_member_object_viewer -c component.template.data.terraform_remote_state.storage.backend='local'
 terrahub configure -i iam_member_object_viewer -c component.template.data.terraform_remote_state.storage.config.path='/tmp/.terrahub/local_backend/google_static_website/terraform.tfstate'
-terrahub configure -i iam_member_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_member_object_viewer.bucket="${GOOGLE_STORAGE_BUCKET}_website"
+terrahub configure -i iam_member_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_member_object_viewer.bucket="${STORAGE_BUCKET}_website"
 terrahub configure -i iam_member_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_member_object_viewer.role="roles/storage.objectViewer"
 terrahub configure -i iam_member_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_member_object_viewer.member="allUsers"
 terrahub configure -i iam_member_object_viewer -c component.template.variable -D -y
@@ -308,5 +309,5 @@ Your output should be similar to the one below:
 Run the following command in terminal:
 ```
 curl https://us-central1-terrahub-123456.cloudfunctions.net/demofunctionxxxxxxxx
-curl https://${GOOGLE_STORAGE_BUCKET}_website.storage.googleapis.com/index.html
+curl https://${STORAGE_BUCKET}_website.storage.googleapis.com/index.html
 ```
