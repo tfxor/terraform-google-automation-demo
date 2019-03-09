@@ -61,7 +61,7 @@ name: projects/***
 projectId: ***
 ```
 
-Finally, run the following command in terminal:
+Finally, run the following commands in terminal:
 ```shell
 gcloud services enable cloudresourcemanager.googleapis.com
 gcloud services enable cloudbilling.googleapis.com
