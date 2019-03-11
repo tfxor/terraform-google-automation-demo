@@ -8,8 +8,8 @@ corresponding terraform configurations:
 |-----------------------|--------------------|-------------------------|
 | Cloud Function | google_cloudfunctions_function | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L24 |
 | Cloud Storage | google_storage_bucket | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7 |
-| Static Website | google_storage_bucket_object | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L19 |
-| IAM Policy | google_storage_bucket_iam_member | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7 |
+| Static Website | google_storage_bucket_object | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/static_website/.terrahub.yml#L8 |
+| IAM Policy | google_storage_bucket_iam_member | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/iam_object_viewer/.terrahub.yml#L9 |
 
 Follow below instructions to try this out in your own Google Cloud account.
 
