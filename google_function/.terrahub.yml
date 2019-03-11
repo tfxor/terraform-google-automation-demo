@@ -45,8 +45,8 @@ build:
     variables:
       THUB_FUNCTION_ZIP: demo.zip
       THUB_FUNCTION_TXT: demo.txt
-      COMPONENT_NAME: google_function
-      OBJECT_NAME: google_storage_object
+      THUB_COMPONENT: google_function
+      THUB_OBJECT: google_storage_object
       THUB_BUILD_PATH: ..
       THUB_BUILD_OK: false
       THUB_BUCKET_PATH: 'gs://terrahub_bucket_123456'
@@ -64,7 +64,7 @@ build:
     build:
       commands:
         - 'echo "BUILD: Running build step"'
-        - ./scripts/build.sh $COMPONENT_NAME $OBJECT_NAME $THUB_BUCKET_KEY/
+        - ./scripts/build.sh $THUB_COMPONENT $THUB_OBJECT $THUB_BUCKET_KEY/
       finally:
         - 'echo "BUILD: build step successful"'
     post_build:
