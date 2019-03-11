@@ -1,20 +1,20 @@
 #!/bin/bash
 
-## Component name
+## TerraHub Component
 THUB_COMPONENT=${1}
 if [ -z "${THUB_COMPONENT}" ]; then
   echo >&2 'ERROR: THUB_COMPONENT variable is empty. Aborting...'
   exit 1
 fi
 
-## Object name
+## Google Storage object name
 THUB_OBJECT=${2}
 if [ -z "${THUB_OBJECT}" ]; then
   echo >&2 'ERROR: THUB_OBJECT variable is empty. Aborting...'
   exit 1
 fi
 
-## Bucket key
+## Google Storage bucket key
 THUB_BUCKET_KEY=${3}
 if [ -z "${THUB_BUCKET_KEY}" ]; then
   echo >&2 'ERROR: THUB_BUCKET_KEY variable is empty. Aborting...'
