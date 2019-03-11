@@ -1,5 +1,18 @@
 # Terraform Automation Demo using Google Cloud Provider
 
+The purpose of this repository is to show case terraform automation for Google
+Cloud. This demo will provision the following cloud resources associated to
+corresponding terraform configurations:
+
+| GCP Resource | Terraform Resource | Link to TerraHub Config |
+|-----------------------|--------------------|-------------------------|
+| Cloud Function | google_cloudfunctions_function | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L24 |
+| Cloud Storage | google_storage_bucket | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7 |
+| Static Website | google_storage_bucket_object | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L19 |
+| IAM Policy | iam_member_object_viewer | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7 |
+
+Follow below instructions to try this out in your own Google Cloud account.
+
 ## Login to Google Cloud
 
 Run the following command in terminal:
@@ -116,7 +129,12 @@ bindings:
 version: 1
 ```
 
-## Create Terraform Configurations Using TerraHub
+## Terraform Automation and Orchestration Tool
+
+The next couple of paragraphs are show casing the process of creating terraform
+configurations using [TerraHub CLI](https://github.com/TerraHubCorp/terrahub).
+We have opted to use YML format instead of HCL because it's easier and faster
+to customize and automate terraform runs (see `terrahub component` command).
 
 Run the following commands in terminal:
 ```shell
@@ -133,6 +151,8 @@ terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
 > NOTE: If you don't have TerraHub CLI, check out this
 [installation guide](https://www.npmjs.com/package/terrahub)
 
+## Build Terraform Configurations
+
 Run the following commands in terminal:
 ```shell
 mkdir demo-terraform-automation-gcp
@@ -144,6 +164,13 @@ Your output should be similar to the one below:
 ```
 ✅ Project successfully initialized
 ```
+
+> NOTE: If you want to jump directly to terraform automation part of the demo,
+instead of creating `demo-terraform-automation-gcp` from scratch, clone current
+repository, follow the instructions for `Copy Source Code for Google Function
+and Static Website`, after jump to `Update Project Config` and skip down to
+`Visualize TerraHub Components`. This way you will fast forward through terrahub
+components creation and customization, and switch directly to the automation part.
 
 ## Copy Source Code for Google Function and Static Website
 
@@ -342,7 +369,7 @@ Project: demo-terraform-automation-gcp
 
 Run the following command in terminal:
 ```shell
-terrahub run -a -y -i google_storage,google_static_website
+terrahub run -y -a -i google_storage,google_static_website
 ```
 
 Your output should be similar to the one below:
@@ -365,7 +392,7 @@ Your output should be similar to the one below:
 
 Run the following command in terminal:
 ```shell
-terrahub run -a -y
+terrahub run -y -a
 ```
 
 Your output should be similar to the one below:
