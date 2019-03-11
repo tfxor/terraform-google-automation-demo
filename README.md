@@ -1,4 +1,17 @@
-# Terraform Automation using Google Provider
+# Terraform Automation Demo using Google Cloud Provider
+
+The purpose of this repository is to show case terraform automation for Google
+Cloud. This demo will provision the following cloud resources associated to
+corresponding terraform configurations:
+
+| GCP Resource | Terraform Resource | Link to TerraHub Config |
+|-----------------------|--------------------|-------------------------|
+| Cloud Function | google_cloudfunctions_function | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L24 |
+| Cloud Storage | google_storage_bucket | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7 |
+| Static Website | google_storage_bucket_object | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L19 |
+| IAM Policy | iam_member_object_viewer | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7 |
+
+Follow below instructions to try this out in your own Google Cloud account.
 
 ## Login to Google Cloud
 
@@ -12,7 +25,7 @@ gcloud auth login
 
 ## Setup Environment Variables (Will Be Used Later)
 
-Manual Setup (set values in double quotes and run the following command in terminal):
+Manual Setup (set values in double quotes and run the following commands in terminal):
 ```shell
 export GOOGLE_CLOUD_PROJECT=""            ## e.g. terrahub-123456
 export GOOGLE_APPLICATION_CREDENTIALS=""  ## e.g. ${HOME}/.config/gcloud/terraform.json
@@ -39,10 +52,30 @@ Run the following command in terminal:
 gcloud projects create ${GOOGLE_CLOUD_PROJECT} \
   --name="${PROJECT_NAME}" \
   --set-as-default
+```
 
+Your output should be similar to the one below:
+```
+Create in progress for [https://cloudresourcemanager.googleapis.com/v1/projects/***].
+Waiting for [operations/***] to finish ... done.
+```
+
+Next, run the following command in terminal:
+```shell
 gcloud beta billing projects link ${GOOGLE_CLOUD_PROJECT} \
   --billing-account="${BILLING_ID}"
+```
 
+Your output should be similar to the one below:
+```
+billingAccountName: billingAccounts/***
+billingEnabled: true
+name: projects/***
+projectId: ***
+```
+
+Finally, run the following commands in terminal:
+```shell
 gcloud services enable cloudresourcemanager.googleapis.com
 gcloud services enable cloudbilling.googleapis.com
 gcloud services enable iam.googleapis.com
@@ -52,6 +85,7 @@ gcloud services enable storage-component.googleapis.com
 
 Your output should be similar to the one below:
 ```
+Operation "operations/***" finished successfully.
 ```
 
 ## Create Google Cloud IAM Service Account & Key
@@ -60,13 +94,22 @@ Run the following command in terminal:
 ```shell
 gcloud iam service-accounts create ${IAM_NAME} \
   --display-name="${IAM_DESC}"
+```
 
+Your output should be similar to the one below:
+```
+Created service account [***].
+```
+
+After that, run the following command in terminal:
+```shell
 gcloud iam service-accounts keys create ${GOOGLE_APPLICATION_CREDENTIALS} \
   --iam-account="${IAM_NAME}@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com"
 ```
 
 Your output should be similar to the one below:
 ```
+Created key [***] of type [json] as [***] for [***@***.iam.gserviceaccount.com]
 ```
 
 ## Add IAM Policy Binding to Google Cloud Project
@@ -80,9 +123,18 @@ gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} \
 
 Your output should be similar to the one below:
 ```
+Updated IAM policy for project [***].
+bindings:
+...
+version: 1
 ```
 
-## Create Terraform Configurations Using TerraHub
+## Terraform Automation and Orchestration Tool
+
+The next couple of paragraphs are show casing the process of creating terraform
+configurations using [TerraHub CLI](https://github.com/TerraHubCorp/terrahub).
+We have opted to use YML format instead of HCL because it's easier and faster
+to customize and automate terraform runs (see `terrahub component` command).
 
 Run the following commands in terminal:
 ```shell
@@ -99,11 +151,13 @@ terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
 > NOTE: If you don't have TerraHub CLI, check out this
 [installation guide](https://www.npmjs.com/package/terrahub)
 
-Run the following command in terminal:
+## Build Terraform Configurations
+
+Run the following commands in terminal:
 ```shell
-mkdir demo-terraform-automation-google
-cd demo-terraform-automation-google
-terrahub project -n demo-terraform-automation-google
+mkdir demo-terraform-automation-gcp
+cd demo-terraform-automation-gcp
+terrahub project -n demo-terraform-automation-gcp
 ```
 
 Your output should be similar to the one below:
@@ -111,11 +165,30 @@ Your output should be similar to the one below:
 ✅ Project successfully initialized
 ```
 
-> NOTE: For this demo we have added "index.js" file which you have to copy in "demo-terraform-automation-google" dir  
+> NOTE: If you want to jump directly to terraform automation part of the demo,
+instead of creating `demo-terraform-automation-gcp` from scratch, clone current
+repository, follow the instructions for `Copy Source Code for Google Function
+and Static Website`, after jump to `Update Project Config` and skip down to
+`Visualize TerraHub Components`. This way you will fast forward through terrahub
+components creation and customization, and switch directly to the automation part.
 
-> NOTE: For this demo we have run the following command in terminal 
+## Copy Source Code for Google Function and Static Website
+
+The source code of Google Function is stored in `index.js`:
+
+```shell
+cat 'exports.helloGET = (req, res) => { res.send("Hello World!\n"); };' > index.js
+```
+
+The source code of Static Website is cloned from another public repository:
+
+```shell
 git clone https://github.com/TerraHubCorp/www.git \
-&& rm -rf ./www/.terrahub*  
+&& rm -rf ./www/.terrahub*
+```
+
+> NOTE: We are removing `.terrahub` folder (as shown above) because
+already included terraform configuration is not relevant for this demo
 
 ## Create TerraHub Components from Templates
 
@@ -134,7 +207,7 @@ Your output should be similar to the one below:
 
 ## Update Project Config
 
-Run the following command in terminal:
+Run the following commands in terminal:
 ```shell
 terrahub configure -c terraform.version=0.11.11
 terrahub configure -c template.provider.google={}
@@ -149,7 +222,7 @@ Your output should be similar to the one below:
 
 ## Customize TerraHub Component for Storage Bucket
 
-Run the following command in terminal:
+Run the following commands in terminal:
 ```shell
 terrahub configure -i google_storage -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_storage/terraform.tfstate'
 terrahub configure -i google_storage -c component.template.resource.google_storage_bucket.google_storage.name="${STORAGE_BUCKET}"
@@ -166,7 +239,7 @@ Your output should be similar to the one below:
 
 ## Customize TerraHub Component for Google Cloud Function
 
-Run the following command in terminal:
+Run the following commands in terminal:
 ```shell
 terrahub configure -i google_function -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_function/terraform.tfstate'
 terrahub configure -i google_function -c component.template.data.terraform_remote_state.storage.backend='local'
@@ -219,7 +292,7 @@ Your output should be similar to the one below:
 
 ## Customize TerraHub Component for Google Cloud Static WebSite
 
-Run the following command in terminal:
+Run the following commands in terminal:
 ```shell
 terrahub configure -i google_static_website -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_static_website/terraform.tfstate'
 terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.name="${STORAGE_BUCKET}_website"
@@ -258,7 +331,7 @@ Your output should be similar to the one below:
 
 ## Customize TerraHub Component for IAM Member Object Viewer
 
-Run the following command in terminal:
+Run the following commands in terminal:
 ```shell
 terrahub configure -i iam_member_object_viewer -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/iam_member_object_viewer/terraform.tfstate'
 terrahub configure -i iam_member_object_viewer -c component.template.data.terraform_remote_state.storage.backend='local'
@@ -283,31 +356,57 @@ terrahub graph
 
 Your output should be similar to the one below:
 ```
-Project: demo-terraform-automation-google
+Project: demo-terraform-automation-gcp
  ├─ google_storage [path: ./google_storage]
  │  └─ google_function [path: ./google_function]
  └─ google_static_website [path: ./www/.terrahub/google_static_website]
     └─ iam_member_object_viewer [path: ./www/.terrahub/iam_member_object_viewer]
 ```
 
-
 ## Run TerraHub Automation
+
+### Prepare Storage Resources
 
 Run the following command in terminal:
 ```shell
-terrahub run -a -y -i google_storage,google_static_website
-terrahub build -i google_function,google_static_website
-terrahub run -a -y
+terrahub run -y -a -i google_storage,google_static_website
 ```
 
 Your output should be similar to the one below:
 ```
 ```
 
-## Run Test Command
+### Prepare Source Code for Deployment
 
 Run the following command in terminal:
+
+```shell
+terrahub build -i google_function,google_static_website
+```
+
+Your output should be similar to the one below:
+```
+```
+
+### Run TerraHub Automation
+
+Run the following command in terminal:
+```shell
+terrahub run -y -a
+```
+
+Your output should be similar to the one below:
+```
+```
+
+## Testing Deployed Cloud Resources
+
+Check if backend was deployed successfully. Run the following command in terminal:
 ```
 curl https://us-central1-terrahub-123456.cloudfunctions.net/demofunctionxxxxxxxx
+```
+
+Check if frontend was deployed successfully. Run the following command in terminal:
+```
 curl https://${STORAGE_BUCKET}_website.storage.googleapis.com/index.html
 ```
