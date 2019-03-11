@@ -151,7 +151,7 @@ terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
 > NOTE: If you don't have TerraHub CLI, check out this
 [installation guide](https://www.npmjs.com/package/terrahub)
 
-## Build Terraform Configurations
+## Build Terraform Configurations from Scratch
 
 Run the following commands in terminal:
 ```shell
