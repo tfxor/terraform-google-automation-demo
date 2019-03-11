@@ -167,10 +167,26 @@ Your output should be similar to the one below:
 
 > NOTE: If you want to jump directly to terraform automation part of the demo,
 instead of creating `demo-terraform-automation-gcp` from scratch, clone current
-repository, follow the instructions for `Copy Source Code for Google Function
-and Static Website`, after jump to `Update Project Config` and skip down to
-`Visualize TerraHub Components`. This way you will fast forward through terrahub
-components creation and customization, and switch directly to the automation part.
+repository, follow the instructions for `Update TerraHub's Project Config`,
+continue to `Copy Source Code for Google Function and Static Website` and then
+jump down to `Visualize TerraHub Components`. This way you will fast forward
+through terrahub components creation and customization, and switch directly to
+automation part.
+
+## Update TerraHub's Project Config
+
+Run the following commands in terminal:
+```shell
+terrahub configure -c terraform.version=0.11.11
+terrahub configure -c template.provider.google={}
+terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}"
+terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
 
 ## Copy Source Code for Google Function and Static Website
 
@@ -198,21 +214,6 @@ terrahub component -t google_storage_bucket -n google_storage \
 && terrahub component -t google_cloudfunctions_function -n google_function -o ../google_storage \
 && terrahub component -t google_storage_bucket -n google_static_website -d ./www/.terrahub \
 && terrahub component -t google_storage_bucket_iam_member -n iam_member_object_viewer -d ./www/.terrahub -o ../google_static_website
-```
-
-Your output should be similar to the one below:
-```
-✅ Done
-```
-
-## Update Project Config
-
-Run the following commands in terminal:
-```shell
-terrahub configure -c terraform.version=0.11.11
-terrahub configure -c template.provider.google={}
-terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}"
-terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
 ```
 
 Your output should be similar to the one below:
