@@ -3,7 +3,7 @@
 ## Source path
 THUB_SRC=${1}
 if [ -z "${THUB_SRC}" ]; then
-  echo >&2 'ERROR: THUB_SRC variable is empty. Aborting...'
+  echo 'ERROR: THUB_SRC variable is empty. Aborting...'
   exit 1
 fi
 
@@ -39,4 +39,6 @@ echo "INFO: Google Storage Object SHA256 => ${THUB_COMPARE}"
 if [ "${THUB_SHA}" != "${THUB_COMPARE}" ]; then
   echo 'Build is required!'
   echo 'export THUB_BUILD_OK="true"' >> .terrahub_build.env
+else
+  echo 'Build is NOT required.'
 fi

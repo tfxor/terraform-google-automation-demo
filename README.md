@@ -212,8 +212,8 @@ Run the following command in terminal:
 ```shell
 terrahub component -t google_storage_bucket -n google_storage \
 && terrahub component -t google_cloudfunctions_function -n google_function -o ../google_storage \
-&& terrahub component -t google_storage_bucket -n static_website -d ./www/.terrahub \
-&& terrahub component -t google_storage_bucket_iam_member -n iam_object_viewer -d ./www/.terrahub -o ../static_website
+&& terrahub component -t google_storage_bucket -n static_website \
+&& terrahub component -t google_storage_bucket_iam_member -n iam_object_viewer -o ../static_website
 ```
 
 Your output should be similar to the one below:
@@ -305,14 +305,14 @@ terrahub configure -i static_website -c component.template.resource.google_stora
 terrahub configure -i static_website -c component.template.variable -D -y
 terrahub configure -i static_website -c build.env.variables.THUB_ENV='dev'
 terrahub configure -i static_website -c build.env.variables.THUB_INDEX_FILE='www.txt'
-terrahub configure -i static_website -c build.env.variables.THUB_S3_PATH="gs://${STORAGE_BUCKET}_website"
+terrahub configure -i static_website -c build.env.variables.THUB_GS_PATH="gs://${STORAGE_BUCKET}_website"
 terrahub configure -i static_website -c build.env.variables.THUB_ROBOTS='../../robots.dev.txt'
 terrahub configure -i static_website -c build.env.variables.THUB_BUILD_PATH='../../build'
 terrahub configure -i static_website -c build.env.variables.THUB_SOURCE_PATH='../../assets ../../static/fonts ../../static/img ../../views'
 terrahub configure -i static_website -c build.env.variables.THUB_BUILD_OK='false'
 terrahub configure -i static_website -c build.env.variables.THUB_MAX_AGE='600'
 terrahub configure -i static_website -c build.phases.pre_build.commands[0]='echo "BUILD: Running pre_build step"'
-terrahub configure -i static_website -c build.phases.pre_build.commands[1]='./scripts/download.sh $THUB_INDEX_FILE $THUB_S3_PATH/$THUB_INDEX_FILE'
+terrahub configure -i static_website -c build.phases.pre_build.commands[1]='./scripts/download.sh $THUB_INDEX_FILE $THUB_GS_PATH/$THUB_INDEX_FILE'
 terrahub configure -i static_website -c build.phases.pre_build.commands[2]='./scripts/compare.sh $THUB_INDEX_FILE $THUB_SOURCE_PATH'
 terrahub configure -i static_website -c build.phases.pre_build.finally[0]='echo "BUILD: pre_build step successful"'
 terrahub configure -i static_website -c build.phases.build.commands[0]='echo "BUILD: Running build step"'
@@ -320,7 +320,7 @@ terrahub configure -i static_website -c build.phases.build.commands[1]='../../bi
 terrahub configure -i static_website -c build.phases.build.finally[0]='echo "BUILD: build step successful"'
 terrahub configure -i static_website -c build.phases.post_build.commands[0]='echo "BUILD: Running post_build step"'
 terrahub configure -i static_website -c build.phases.post_build.commands[1]='./scripts/shasum.sh $THUB_BUILD_PATH/$THUB_INDEX_FILE'
-terrahub configure -i static_website -c build.phases.post_build.commands[2]='./scripts/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE'
+terrahub configure -i static_website -c build.phases.post_build.commands[2]='./scripts/upload.sh $THUB_BUILD_PATH $THUB_GS_PATH --cache-control max-age=$THUB_MAX_AGE'
 terrahub configure -i static_website -c build.phases.post_build.commands[3]='rm -f .terrahub_build.env $THUB_INDEX_FILE'
 terrahub configure -i static_website -c build.phases.post_build.finally[0]='echo "BUILD: post_build step successful"'
 ```
@@ -360,8 +360,8 @@ Your output should be similar to the one below:
 Project: demo-terraform-automation-gcp
  ├─ google_storage [path: ./google_storage]
  │  └─ google_function [path: ./google_function]
- └─ static_website [path: ./www/.terrahub/static_website]
-    └─ iam_object_viewer [path: ./www/.terrahub/iam_object_viewer]
+ └─ static_website [path: ./static_website]
+    └─ iam_object_viewer [path: ./iam_object_viewer]
 ```
 
 ## Run TerraHub Automation
