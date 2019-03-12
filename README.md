@@ -193,7 +193,7 @@ Your output should be similar to the one below:
 The source code of Google Function is stored in `index.js`:
 
 ```shell
-cat 'exports.helloGET = (req, res) => { res.send("Hello World!\n"); };' > index.js
+echo 'exports.helloGET = (req, res) => { res.send("Hello World!\n"); };' > index.js
 ```
 
 The source code of Static Website is cloned from another public repository:
@@ -388,6 +388,10 @@ terrahub build -i google_function,static_website
 Your output should be similar to the one below:
 ```
 ```
+
+> NOTE: If you get an error saying `ServiceException: 401 Anonymous caller
+does not have storage.objects.get access to [***]`, run `gsutil config` and
+setup default project id.
 
 ### Run TerraHub Automation
 
