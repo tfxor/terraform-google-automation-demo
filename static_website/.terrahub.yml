@@ -34,9 +34,9 @@ build:
       THUB_ENV: dev
       THUB_INDEX_FILE: www.txt
       THUB_GS_PATH: 'gs://terrahub_123456_website'
-      THUB_ROBOTS: ../../robots.dev.txt
-      THUB_BUILD_PATH: ../../build
-      THUB_SOURCE_PATH: ../../assets ../../static/fonts ../../static/img ../../views
+      THUB_ROBOTS: ../www/robots.dev.txt
+      THUB_BUILD_PATH: ../www/build
+      THUB_SOURCE_PATH: ../www/assets ../www/static/fonts ../www/static/img ../www/views
       THUB_BUILD_OK: false
       THUB_MAX_AGE: 600
   phases:
@@ -50,7 +50,7 @@ build:
     build:
       commands:
         - 'echo "BUILD: Running build step"'
-        - ../../bin/compile.sh
+        - ../www/bin/compile.sh
       finally:
         - 'echo "BUILD: build step successful"'
     post_build:
