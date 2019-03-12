@@ -6,10 +6,10 @@ corresponding terraform configurations:
 
 | GCP Resource | Terraform Resource | Link to TerraHub Config |
 |-----------------------|--------------------|-------------------------|
-| Cloud Function | google_cloudfunctions_function | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L24 |
-| Cloud Storage | google_storage_bucket | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7 |
-| Static Website | google_storage_bucket_object | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/static_website/.terrahub.yml#L8 |
-| IAM Policy | google_storage_bucket_iam_member | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/iam_object_viewer/.terrahub.yml#L9 |
+| Cloud Function | google_cloudfunctions_function | [google_function/.terrahub.yml#L24](https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L24) |
+| Cloud Storage | google_storage_bucket | [google_storage/.terrahub.yml#L7](https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7) |
+| Static Website | google_storage_bucket_object | [static_website/.terrahub.yml#L8](https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/static_website/.terrahub.yml#L8) |
+| IAM Policy | google_storage_bucket_iam_member | [iam_object_viewer/.terrahub.yml#L9](https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/iam_object_viewer/.terrahub.yml#L9) |
 
 Follow below instructions to try this out in your own Google Cloud account.
 
