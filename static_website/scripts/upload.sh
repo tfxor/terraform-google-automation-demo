@@ -3,14 +3,14 @@
 ## Source path
 THUB_SRC=${1}
 if [ -z "${THUB_SRC}" ]; then
-  echo >&2 'ERROR: THUB_SRC variable is empty. Aborting...'
+  echo 'ERROR: THUB_SRC variable is empty. Aborting...'
   exit 1
 fi
 
 ## Google Storage bucket name
 THUB_GS_PATH=${2-${THUB_GS_PATH}}
 if [ -z "${THUB_GS_PATH}" ]; then
-  echo >&2 'ERROR: THUB_GS_PATH variable is empty. Aborting...'
+  echo 'ERROR: THUB_GS_PATH variable is empty. Aborting...'
   exit 1
 fi
 
@@ -22,11 +22,11 @@ if [ "${THUB_BUILD_OK}" == "true" ]; then
   ## Sync THUB_SRC to THUB_GS_PATH
   gsutil --version > /dev/null 2>&1 || { echo >&2 'gsutil is missing. Aborting...'; exit 1; }
   if [[ -d "${THUB_SRC}" ]]; then
-    gsutil -m rsync ${THUB_SRC} ${THUB_GS_PATH}
+    gsutil -m rsync -d -r ${THUB_SRC} ${THUB_GS_PATH}
   elif [[ -f "${THUB_SRC}" ]]; then
     gsutil -m cp ${THUB_SRC} ${THUB_GS_PATH}
   else
-    echo >&2 "ERROR: ${THUB_SRC} is not valid"
+    echo "ERROR: ${THUB_SRC} is not valid"
     exit 1
   fi
 else

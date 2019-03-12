@@ -5,6 +5,26 @@ component:
   dependsOn:
     - ../google_storage
   template:
+    resource:
+      google_cloudfunctions_function:
+        google_function:
+          name: 'demofunction${local.project["code"]}'
+          depends_on:
+            - google_storage_bucket_object.google_storage_object
+          region: us-central1
+          runtime: nodejs8
+          description: My demo function
+          available_memory_mb: 128
+          source_archive_bucket: '${data.terraform_remote_state.storage.thub_id}'
+          source_archive_object: '${google_storage_bucket_object.google_storage_object.name}'
+          trigger_http: true
+          timeout: 60
+          entry_point: helloGET
+      google_storage_bucket_object:
+        google_storage_object:
+          name: demo.zip
+          bucket: '${data.terraform_remote_state.storage.thub_id}'
+          source: ./demo.zip
     terraform:
       backend:
         local:
@@ -15,26 +35,6 @@ component:
           backend: local
           config:
             path: /tmp/.terrahub/local_backend/google_storage/terraform.tfstate
-    resource:
-      google_storage_bucket_object:
-        google_storage_object:
-          name: demo.zip
-          bucket: '${data.terraform_remote_state.storage.thub_id}'
-          source: ./demo.zip
-      google_cloudfunctions_function:
-        google_function:
-          depends_on:
-            - google_storage_bucket_object.google_storage_object
-          name: 'demofunction${local.project["code"]}'
-          region: us-central1
-          runtime: nodejs8
-          description: My demo function
-          available_memory_mb: 128
-          source_archive_bucket: '${data.terraform_remote_state.storage.thub_id}'
-          source_archive_object: '${google_storage_bucket_object.google_storage_object.name}'
-          trigger_http: true
-          timeout: 60
-          entry_point: helloGET
     output:
       id:
         value: '${google_cloudfunctions_function.google_function.id}'

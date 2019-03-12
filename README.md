@@ -6,10 +6,10 @@ corresponding terraform configurations:
 
 | GCP Resource | Terraform Resource | Link to TerraHub Config |
 |-----------------------|--------------------|-------------------------|
-| Cloud Function | google_cloudfunctions_function | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L24 |
-| Cloud Storage | google_storage_bucket | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7 |
-| Static Website | google_storage_bucket_object | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L19 |
-| IAM Policy | iam_member_object_viewer | https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7 |
+| Cloud Function | google_cloudfunctions_function | [google_function/.terrahub.yml#L24](https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_function/.terrahub.yml#L24) |
+| Cloud Storage | google_storage_bucket | [google_storage/.terrahub.yml#L7](https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/google_storage/.terrahub.yml#L7) |
+| Static Website | google_storage_bucket_object | [static_website/.terrahub.yml#L8](https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/static_website/.terrahub.yml#L8) |
+| IAM Policy | google_storage_bucket_iam_member | [iam_object_viewer/.terrahub.yml#L9](https://github.com/TerraHubCorp/demo-terraform-automation-gcp/blob/master/iam_object_viewer/.terrahub.yml#L9) |
 
 Follow below instructions to try this out in your own Google Cloud account.
 
@@ -193,7 +193,7 @@ Your output should be similar to the one below:
 The source code of Google Function is stored in `index.js`:
 
 ```shell
-cat 'exports.helloGET = (req, res) => { res.send("Hello World!\n"); };' > index.js
+echo 'exports.helloGET = (req, res) => { res.send("Hello World!\n"); };' > index.js
 ```
 
 The source code of Static Website is cloned from another public repository:
@@ -212,8 +212,8 @@ Run the following command in terminal:
 ```shell
 terrahub component -t google_storage_bucket -n google_storage \
 && terrahub component -t google_cloudfunctions_function -n google_function -o ../google_storage \
-&& terrahub component -t google_storage_bucket -n google_static_website -d ./www/.terrahub \
-&& terrahub component -t google_storage_bucket_iam_member -n iam_member_object_viewer -d ./www/.terrahub -o ../google_static_website
+&& terrahub component -t google_storage_bucket -n static_website \
+&& terrahub component -t google_storage_bucket_iam_member -n iam_object_viewer -o ../static_website
 ```
 
 Your output should be similar to the one below:
@@ -295,34 +295,34 @@ Your output should be similar to the one below:
 
 Run the following commands in terminal:
 ```shell
-terrahub configure -i google_static_website -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_static_website/terraform.tfstate'
-terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.name="${STORAGE_BUCKET}_website"
-terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.location='US'
-terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.force_destroy='true'
-terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.project='${local.google_project_id}'
-terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.website.main_page_suffix='index.html'
-terrahub configure -i google_static_website -c component.template.resource.google_storage_bucket.google_static_website.website.not_found_page='/404.html'
-terrahub configure -i google_static_website -c component.template.variable -D -y
-terrahub configure -i google_static_website -c build.env.variables.THUB_ENV='dev'
-terrahub configure -i google_static_website -c build.env.variables.THUB_INDEX_FILE='www.txt'
-terrahub configure -i google_static_website -c build.env.variables.THUB_S3_PATH="gs://${STORAGE_BUCKET}_website"
-terrahub configure -i google_static_website -c build.env.variables.THUB_ROBOTS='../../robots.dev.txt'
-terrahub configure -i google_static_website -c build.env.variables.THUB_BUILD_PATH='../../build'
-terrahub configure -i google_static_website -c build.env.variables.THUB_SOURCE_PATH='../../assets ../../static/fonts ../../static/img ../../views'
-terrahub configure -i google_static_website -c build.env.variables.THUB_BUILD_OK='false'
-terrahub configure -i google_static_website -c build.env.variables.THUB_MAX_AGE='600'
-terrahub configure -i google_static_website -c build.phases.pre_build.commands[0]='echo "BUILD: Running pre_build step"'
-terrahub configure -i google_static_website -c build.phases.pre_build.commands[1]='./scripts/download.sh $THUB_INDEX_FILE $THUB_S3_PATH/$THUB_INDEX_FILE'
-terrahub configure -i google_static_website -c build.phases.pre_build.commands[2]='./scripts/compare.sh $THUB_INDEX_FILE $THUB_SOURCE_PATH'
-terrahub configure -i google_static_website -c build.phases.pre_build.finally[0]='echo "BUILD: pre_build step successful"'
-terrahub configure -i google_static_website -c build.phases.build.commands[0]='echo "BUILD: Running build step"'
-terrahub configure -i google_static_website -c build.phases.build.commands[1]='../../bin/compile.sh'
-terrahub configure -i google_static_website -c build.phases.build.finally[0]='echo "BUILD: build step successful"'
-terrahub configure -i google_static_website -c build.phases.post_build.commands[0]='echo "BUILD: Running post_build step"'
-terrahub configure -i google_static_website -c build.phases.post_build.commands[1]='./scripts/shasum.sh $THUB_BUILD_PATH/$THUB_INDEX_FILE'
-terrahub configure -i google_static_website -c build.phases.post_build.commands[2]='./scripts/upload.sh $THUB_BUILD_PATH $THUB_S3_PATH --cache-control max-age=$THUB_MAX_AGE'
-terrahub configure -i google_static_website -c build.phases.post_build.commands[3]='rm -f .terrahub_build.env $THUB_INDEX_FILE'
-terrahub configure -i google_static_website -c build.phases.post_build.finally[0]='echo "BUILD: post_build step successful"'
+terrahub configure -i static_website -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/static_website/terraform.tfstate'
+terrahub configure -i static_website -c component.template.resource.google_storage_bucket.static_website.name="${STORAGE_BUCKET}_website"
+terrahub configure -i static_website -c component.template.resource.google_storage_bucket.static_website.location='US'
+terrahub configure -i static_website -c component.template.resource.google_storage_bucket.static_website.force_destroy='true'
+terrahub configure -i static_website -c component.template.resource.google_storage_bucket.static_website.project='${local.google_project_id}'
+terrahub configure -i static_website -c component.template.resource.google_storage_bucket.static_website.website.main_page_suffix='index.html'
+terrahub configure -i static_website -c component.template.resource.google_storage_bucket.static_website.website.not_found_page='/404.html'
+terrahub configure -i static_website -c component.template.variable -D -y
+terrahub configure -i static_website -c build.env.variables.THUB_ENV='dev'
+terrahub configure -i static_website -c build.env.variables.THUB_INDEX_FILE='www.txt'
+terrahub configure -i static_website -c build.env.variables.THUB_GS_PATH="gs://${STORAGE_BUCKET}_website"
+terrahub configure -i static_website -c build.env.variables.THUB_ROBOTS='../www/robots.dev.txt'
+terrahub configure -i static_website -c build.env.variables.THUB_BUILD_PATH='../www/build'
+terrahub configure -i static_website -c build.env.variables.THUB_SOURCE_PATH='../www/assets ../www/static/fonts ../www/static/img ../www/views'
+terrahub configure -i static_website -c build.env.variables.THUB_BUILD_OK='false'
+terrahub configure -i static_website -c build.env.variables.THUB_MAX_AGE='600'
+terrahub configure -i static_website -c build.phases.pre_build.commands[0]='echo "BUILD: Running pre_build step"'
+terrahub configure -i static_website -c build.phases.pre_build.commands[1]='./scripts/download.sh $THUB_INDEX_FILE $THUB_GS_PATH/$THUB_INDEX_FILE'
+terrahub configure -i static_website -c build.phases.pre_build.commands[2]='./scripts/compare.sh $THUB_INDEX_FILE $THUB_SOURCE_PATH'
+terrahub configure -i static_website -c build.phases.pre_build.finally[0]='echo "BUILD: pre_build step successful"'
+terrahub configure -i static_website -c build.phases.build.commands[0]='echo "BUILD: Running build step"'
+terrahub configure -i static_website -c build.phases.build.commands[1]='../www/bin/compile.sh'
+terrahub configure -i static_website -c build.phases.build.finally[0]='echo "BUILD: build step successful"'
+terrahub configure -i static_website -c build.phases.post_build.commands[0]='echo "BUILD: Running post_build step"'
+terrahub configure -i static_website -c build.phases.post_build.commands[1]='./scripts/shasum.sh $THUB_BUILD_PATH/$THUB_INDEX_FILE'
+terrahub configure -i static_website -c build.phases.post_build.commands[2]='./scripts/upload.sh $THUB_BUILD_PATH $THUB_GS_PATH --cache-control max-age=$THUB_MAX_AGE'
+terrahub configure -i static_website -c build.phases.post_build.commands[3]='rm -f .terrahub_build.env $THUB_INDEX_FILE'
+terrahub configure -i static_website -c build.phases.post_build.finally[0]='echo "BUILD: post_build step successful"'
 ```
 
 Your output should be similar to the one below:
@@ -334,13 +334,13 @@ Your output should be similar to the one below:
 
 Run the following commands in terminal:
 ```shell
-terrahub configure -i iam_member_object_viewer -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/iam_member_object_viewer/terraform.tfstate'
-terrahub configure -i iam_member_object_viewer -c component.template.data.terraform_remote_state.storage.backend='local'
-terrahub configure -i iam_member_object_viewer -c component.template.data.terraform_remote_state.storage.config.path='/tmp/.terrahub/local_backend/google_static_website/terraform.tfstate'
-terrahub configure -i iam_member_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_member_object_viewer.bucket="${STORAGE_BUCKET}_website"
-terrahub configure -i iam_member_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_member_object_viewer.role="roles/storage.objectViewer"
-terrahub configure -i iam_member_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_member_object_viewer.member="allUsers"
-terrahub configure -i iam_member_object_viewer -c component.template.variable -D -y
+terrahub configure -i iam_object_viewer -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/iam_object_viewer/terraform.tfstate'
+terrahub configure -i iam_object_viewer -c component.template.data.terraform_remote_state.storage.backend='local'
+terrahub configure -i iam_object_viewer -c component.template.data.terraform_remote_state.storage.config.path='/tmp/.terrahub/local_backend/static_website/terraform.tfstate'
+terrahub configure -i iam_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_object_viewer.bucket="${STORAGE_BUCKET}_website"
+terrahub configure -i iam_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_object_viewer.role="roles/storage.objectViewer"
+terrahub configure -i iam_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_object_viewer.member="allUsers"
+terrahub configure -i iam_object_viewer -c component.template.variable -D -y
 ```
 
 Your output should be similar to the one below:
@@ -360,8 +360,8 @@ Your output should be similar to the one below:
 Project: demo-terraform-automation-gcp
  ├─ google_storage [path: ./google_storage]
  │  └─ google_function [path: ./google_function]
- └─ google_static_website [path: ./www/.terrahub/google_static_website]
-    └─ iam_member_object_viewer [path: ./www/.terrahub/iam_member_object_viewer]
+ └─ static_website [path: ./static_website]
+    └─ iam_object_viewer [path: ./iam_object_viewer]
 ```
 
 ## Run TerraHub Automation
@@ -370,7 +370,7 @@ Project: demo-terraform-automation-gcp
 
 Run the following command in terminal:
 ```shell
-terrahub run -y -a -i google_storage,google_static_website
+terrahub run -y -a -i google_storage,static_website
 ```
 
 Your output should be similar to the one below:
@@ -382,12 +382,16 @@ Your output should be similar to the one below:
 Run the following command in terminal:
 
 ```shell
-terrahub build -i google_function,google_static_website
+terrahub build -i google_function,static_website
 ```
 
 Your output should be similar to the one below:
 ```
 ```
+
+> NOTE: If you get an error saying `ServiceException: 401 Anonymous caller
+does not have storage.objects.get access to [***]`, run `gsutil config` and
+setup default project id.
 
 ### Run TerraHub Automation
 
