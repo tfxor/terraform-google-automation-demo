@@ -19,7 +19,6 @@ cat $GOOGLE_APPLICATION_CREDENTIALS_CONTENT > ${HOME}/.config/gcloud/${GOOGLE_CL
 BILLING_ID="$(gcloud beta billing accounts list --format=json | jq '.[0].name[16:]')"
 GOOGLE_APPLICATION_CREDENTIALS="${HOME}/.config/gcloud/${GOOGLE_CLOUD_PROJECT}.json"
 SERVICE_ACCOUNT="terraform@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com"
-gcloud iam service-accounts keys create ${GOOGLE_APPLICATION_CREDENTIALS} --iam-account=${SERVICE_ACCOUNT}
 
 terrahub --version > /dev/null 2>&1 || { echo >&2 "terrahub is missing. aborting..."; exit 1; }
 terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}"
