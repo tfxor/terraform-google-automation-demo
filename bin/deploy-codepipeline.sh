@@ -15,6 +15,7 @@ git checkout $BRANCH_FROM
 
 jq --version > /dev/null 2>&1 || { echo >&2 'jq is missing. aborting...'; exit 1; }
 GOOGLE_CLOUD_PROJECT="$(gcloud config list --format=json | jq '.core.project')"
+cat $GOOGLE_APPLICATION_CREDENTIALS_CONTENT > ${HOME}/.config/gcloud/${GOOGLE_CLOUD_PROJECT}.json
 BILLING_ID="$(gcloud beta billing accounts list --format=json | jq '.[0].name[16:]')"
 GOOGLE_APPLICATION_CREDENTIALS="${HOME}/.config/gcloud/${GOOGLE_CLOUD_PROJECT}.json"
 SERVICE_ACCOUNT="terraform@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com"
@@ -25,4 +26,3 @@ terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}
 terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
 
 terrahub run -y -b ${THUB_APPLY} ${THUB_ENV}
-echo "Execution successful: from ${BRANCH_FROM} into ${BRANCH_TO}"
