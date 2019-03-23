@@ -43,6 +43,9 @@ terrahub configure -c component.template.data.terraform_remote_state.storage.bac
 terrahub configure -c component.template.data.terraform_remote_state.storage.config.bucket="data-lake-terrahub" -i "iam_object_viewer"
 terrahub configure -c component.template.data.terraform_remote_state.storage.config.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/static_website" -i "iam_object_viewer"
 
-terrahub run -y -a -i google_function,static_website \
-&& terrahub build -i google_function,static_website \
+terrahub build -i google_function,static_website \
 && terrahub run -y -b ${THUB_APPLY}
+
+# terrahub run -y -a -i google_function,static_website \
+# && terrahub build -i google_function,static_website \
+# && terrahub run -y -b ${THUB_APPLY}
