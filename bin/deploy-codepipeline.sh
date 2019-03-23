@@ -16,6 +16,7 @@ git checkout $BRANCH_FROM
 git clone https://github.com/TerraHubCorp/www.git && rm -rf ./www/.terrahub*
 
 export GOOGLE_CLOUD_PROJECT="$(gcloud config list --format=json | jq -r '.core.project')"
+if [ "${GOOGLE_CLOUD_PROJECT}" == "null" ]; then echo >&2 'gcloud core project is missing. aborting...'; exit 1; fi
 export GOOGLE_APPLICATION_CREDENTIALS="${HOME}/.config/gcloud/${GOOGLE_CLOUD_PROJECT}.json"
 echo $GOOGLE_APPLICATION_CREDENTIALS_CONTENT > ${GOOGLE_APPLICATION_CREDENTIALS}
 gcloud auth activate-service-account --key-file ${GOOGLE_APPLICATION_CREDENTIALS}
@@ -25,4 +26,22 @@ terrahub --version > /dev/null 2>&1 || { echo >&2 'terrahub is missing. aborting
 terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}"
 terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
 
-terrahub run -y -b ${THUB_APPLY} ${THUB_ENV}
+# terrahub configure -c template.terraform.backend.gcs.bucket="data-lake-terrahub"
+# terrahub configure -c component.template.terraform.backend -D -y -i "google_function"
+# terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_function/terraform.tfstate" -i "google_function"
+# terrahub configure -c component.template.terraform.backend -D -y -i "google_storage"
+# terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_storage/terraform.tfstate" -i "google_storage"
+# terrahub configure -c component.template.terraform.backend -D -y -i "iam_object_viewer"
+# terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/iam_object_viewer/terraform.tfstate" -i "iam_object_viewer"
+# terrahub configure -c component.template.terraform.backend -D -y -i "static_website"
+# terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/static_website/terraform.tfstate" -i "static_website"
+# terrahub configure -c component.template.data.terraform_remote_state.iam -D -y -i "google_function"
+# terrahub configure -c component.template.data.terraform_remote_state.iam.backend="s3" -i "google_function"
+# terrahub configure -c component.template.data.terraform_remote_state.iam.config.bucket="data-lake-terrahub-us-east-1" -i "google_function"
+# terrahub configure -c component.template.data.terraform_remote_state.iam.config.region="us-east-1" -i "google_function"
+# terrahub configure -c component.template.data.terraform_remote_state.iam.config.key="terraform/terrahubcorp/demo-terraform-automation-aws/iam_role/terraform.tfstate" -i "google_function"
+
+terrahub run -y -a -i google_storage,static_website
+terrahub build -i google_function,static_website
+terrahub run -y ${THUB_APPLY} ${THUB_ENV}
+terrahub run -y -d ${THUB_APPLY} ${THUB_ENV}
