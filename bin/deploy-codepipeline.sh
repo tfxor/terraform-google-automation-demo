@@ -27,4 +27,5 @@ terrahub --version > /dev/null 2>&1 || { echo >&2 'terrahub is missing. aborting
 terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}"
 terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
 
+cat ${BASH_SOURCE[0]}/../.terrahub.yml
 terrahub run -y -b ${THUB_APPLY} ${THUB_ENV}
