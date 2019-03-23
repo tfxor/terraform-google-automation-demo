@@ -46,6 +46,6 @@ terrahub configure -c component.template.data.terraform_remote_state.storage.con
 terrahub build -i google_function,static_website \
 && terrahub run -y -b ${THUB_APPLY}
 
-# terrahub run -y -a -i google_function,static_website \
+# terrahub run -y -a -i google_storage,static_website \
 # && terrahub build -i google_function,static_website \
 # && terrahub run -y -b ${THUB_APPLY}
