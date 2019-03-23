@@ -13,6 +13,7 @@ if [ "${THUB_STATE}" == "approved" ]; then THUB_APPLY="-a"; fi
 git --version > /dev/null 2>&1 || { echo >&2 'git is missing. aborting...'; exit 1; }
 git checkout $BRANCH_TO
 git checkout $BRANCH_FROM
+git clone https://github.com/TerraHubCorp/www.git && rm -rf ./www/.terrahub*
 
 export GOOGLE_CLOUD_PROJECT="$(gcloud config list --format=json | jq -r '.core.project')"
 export GOOGLE_APPLICATION_CREDENTIALS="${HOME}/.config/gcloud/${GOOGLE_CLOUD_PROJECT}.json"
