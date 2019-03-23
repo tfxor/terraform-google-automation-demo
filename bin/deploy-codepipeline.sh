@@ -28,23 +28,22 @@ terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
 
 terrahub configure -c template.terraform.backend.gcs.bucket="data-lake-terrahub"
 terrahub configure -c component.template.terraform.backend -D -y -i "google_function"
-terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_function/terraform.tfstate" -i "google_function"
+terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_function" -i "google_function"
 terrahub configure -c component.template.terraform.backend -D -y -i "google_storage"
-terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_storage/terraform.tfstate" -i "google_storage"
+terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_storage" -i "google_storage"
 terrahub configure -c component.template.terraform.backend -D -y -i "iam_object_viewer"
-terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/iam_object_viewer/terraform.tfstate" -i "iam_object_viewer"
+terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/iam_object_viewer" -i "iam_object_viewer"
 terrahub configure -c component.template.terraform.backend -D -y -i "static_website"
-terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/static_website/terraform.tfstate" -i "static_website"
+terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/static_website" -i "static_website"
 terrahub configure -c component.template.data.terraform_remote_state.storage -D -y -i "google_function"
 terrahub configure -c component.template.data.terraform_remote_state.storage.backend="gcs" -i "google_function"
 terrahub configure -c component.template.data.terraform_remote_state.storage.config.bucket="data-lake-terrahub" -i "google_function"
-terrahub configure -c component.template.data.terraform_remote_state.storage.config.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_storage/terraform.tfstate" -i "google_function"
+terrahub configure -c component.template.data.terraform_remote_state.storage.config.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_storage" -i "google_function"
 terrahub configure -c component.template.data.terraform_remote_state.storage -D -y -i "iam_object_viewer"
 terrahub configure -c component.template.data.terraform_remote_state.storage.backend="gcs" -i "iam_object_viewer"
 terrahub configure -c component.template.data.terraform_remote_state.storage.config.bucket="data-lake-terrahub" -i "iam_object_viewer"
-terrahub configure -c component.template.data.terraform_remote_state.storage.config.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/static_website/terraform.tfstate" -i "iam_object_viewer"
+terrahub configure -c component.template.data.terraform_remote_state.storage.config.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/static_website" -i "iam_object_viewer"
 
 terrahub run -y -a -i google_storage,static_website \
 && terrahub build -i google_function,static_website \
-&& terrahub run -y ${THUB_APPLY} ${THUB_ENV} \
-&& terrahub run -y -d ${THUB_APPLY} ${THUB_ENV}
+&& terrahub run -y ${THUB_APPLY} ${THUB_ENV}
