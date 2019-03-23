@@ -14,14 +14,13 @@ git --version > /dev/null 2>&1 || { echo >&2 'git is missing. aborting...'; exit
 git checkout $BRANCH_TO
 git checkout $BRANCH_FROM
 
-GOOGLE_CLOUD_PROJECT=$(gcloud config list --format=json | jq -r '.core.project')
+export GOOGLE_CLOUD_PROJECT="$(gcloud config list --format=json | jq -r '.core.project')"
 echo "GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}"
-GOOGLE_APPLICATION_CREDENTIALS=${HOME}/.config/gcloud/${GOOGLE_CLOUD_PROJECT}.json
+export GOOGLE_APPLICATION_CREDENTIALS="${HOME}/.config/gcloud/${GOOGLE_CLOUD_PROJECT}.json"
 echo "GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}"
 echo $GOOGLE_APPLICATION_CREDENTIALS_CONTENT > ${GOOGLE_APPLICATION_CREDENTIALS}
 gcloud auth activate-service-account --key-file ${GOOGLE_APPLICATION_CREDENTIALS}
-BILLING_ID=$(gcloud beta billing accounts list --format=json | jq -r '.[0].name[16:]')
-echo "BILLING_ID: ${BILLING_ID}"
+export BILLING_ID="$(gcloud beta billing accounts list --format=json | jq -r '.[0].name[16:]')"
 
 terrahub --version > /dev/null 2>&1 || { echo >&2 'terrahub is missing. aborting...'; exit 1; }
 terrahub configure -c template.locals.google_project_id="${GOOGLE_CLOUD_PROJECT}"
