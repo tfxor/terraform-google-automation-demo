@@ -9,7 +9,6 @@ component:
       google_cloudfunctions_function:
         google_function:
           name: 'demofunction${local.project["code"]}'
-          project: '${local.google_project_id}'
           depends_on:
             - google_storage_bucket_object.google_storage_object
           region: us-central1
