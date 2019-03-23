@@ -35,13 +35,12 @@ terrahub configure -c template.locals.google_billing_account="${BILLING_ID}"
 # terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/iam_object_viewer/terraform.tfstate" -i "iam_object_viewer"
 # terrahub configure -c component.template.terraform.backend -D -y -i "static_website"
 # terrahub configure -c component.template.terraform.backend.gcs.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/static_website/terraform.tfstate" -i "static_website"
-# terrahub configure -c component.template.data.terraform_remote_state.iam -D -y -i "google_function"
-# terrahub configure -c component.template.data.terraform_remote_state.iam.backend="s3" -i "google_function"
-# terrahub configure -c component.template.data.terraform_remote_state.iam.config.bucket="data-lake-terrahub-us-east-1" -i "google_function"
-# terrahub configure -c component.template.data.terraform_remote_state.iam.config.region="us-east-1" -i "google_function"
-# terrahub configure -c component.template.data.terraform_remote_state.iam.config.key="terraform/terrahubcorp/demo-terraform-automation-aws/iam_role/terraform.tfstate" -i "google_function"
+# terrahub configure -c component.template.data.terraform_remote_state.google_storage -D -y -i "google_function"
+# terrahub configure -c component.template.data.terraform_remote_state.google_storage.backend="gcs" -i "google_function"
+# terrahub configure -c component.template.data.terraform_remote_state.google_storage.config.bucket="data-lake-terrahub" -i "google_function"
+# terrahub configure -c component.template.data.terraform_remote_state.google_storage.config.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_storage/terraform.tfstate" -i "google_function"
 
-terrahub run -y -a -i google_storage,static_website
-terrahub build -i google_function,static_website
-terrahub run -y ${THUB_APPLY} ${THUB_ENV}
-terrahub run -y -d ${THUB_APPLY} ${THUB_ENV}
+terrahub run -y -a -i google_storage,static_website \
+&& terrahub build -i google_function,static_website \
+&& terrahub run -y ${THUB_APPLY} ${THUB_ENV} \
+&& terrahub run -y -d ${THUB_APPLY} ${THUB_ENV}
