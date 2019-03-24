@@ -489,7 +489,7 @@ terrahub graph
 
 Your output should be similar to the one below:
 ```
-Project: demo-terraform-automation-google
+Project: demo-terraform-automation-gcp
  ├─ google_external_address [path: ./google_external_address]
  ├─ google_health_check [path: ./google_health_check]
  ├─ google_storage [path: ./google_storage]
