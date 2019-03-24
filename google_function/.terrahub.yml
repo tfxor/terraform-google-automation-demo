@@ -19,7 +19,6 @@ component:
           trigger_http: true
           timeout: 60
           entry_point: helloGET
-          project: '${local.google_project_id}'
       google_storage_bucket_object:
         google_storage_object:
           name: demo.zip
@@ -81,9 +80,6 @@ build:
         - >-
           ./scripts/upload.sh $THUB_FUNCTION_TXT
           $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT
-        - >-
-          ./scripts/upload.sh $THUB_FUNCTION_ZIP
-          $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_ZIP
         - rm -f .terrahub_build.env $THUB_FUNCTION_TXT
       finally:
         - 'echo "BUILD: post_build step successful"'
