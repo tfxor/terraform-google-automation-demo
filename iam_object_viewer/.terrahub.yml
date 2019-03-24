@@ -9,7 +9,7 @@ component:
       google_storage_bucket_iam_member:
         iam_object_viewer:
           role: roles/storage.objectViewer
-          bucket: terrahub_012345_website
+          bucket: terrahub_123456_website
           member: allUsers
     output:
       etag:

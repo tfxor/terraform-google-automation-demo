@@ -6,7 +6,7 @@ component:
     resource:
       google_storage_bucket:
         static_website:
-          name: terrahub_012345_website
+          name: terrahub_123456_website
           location: US
           force_destroy: true
           project: '${local.google_project_id}'
@@ -33,7 +33,7 @@ build:
     variables:
       THUB_ENV: dev
       THUB_INDEX_FILE: www.txt
-      THUB_GS_PATH: 'gs://terrahub_012345_website'
+      THUB_GS_PATH: 'gs://terrahub_123456_website'
       THUB_ROBOTS: ../www/robots.dev.txt
       THUB_BUILD_PATH: ../www/build
       THUB_SOURCE_PATH: ../www/assets ../www/static/fonts ../www/static/img ../www/views

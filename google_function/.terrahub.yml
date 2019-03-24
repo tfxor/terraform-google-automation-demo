@@ -24,7 +24,7 @@ component:
           project: '${local.google_project_id}'
       google_storage_bucket_object:
         google_storage_object:
-          name: deploy/google_function/1553447397.zip
+          name: demo.zip
           bucket: '${data.terraform_remote_state.storage.thub_id}'
           source: ./demo.zip
     terraform:
@@ -51,7 +51,7 @@ build:
       OBJECT_NAME: google_storage_object
       THUB_BUILD_PATH: ..
       THUB_BUILD_OK: false
-      THUB_BUCKET_PATH: 'gs://terrahub_012345'
+      THUB_BUCKET_PATH: 'gs://terrahub_bucket_123456'
       THUB_BUCKET_KEY: deploy/google_function
   phases:
     pre_build:
