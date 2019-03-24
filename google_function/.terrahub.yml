@@ -19,7 +19,6 @@ component:
           trigger_http: true
           timeout: 60
           entry_point: helloGET
-          project: '${local.google_project_id}'
       google_storage_bucket_object:
         google_storage_object:
           name: demo.zip
