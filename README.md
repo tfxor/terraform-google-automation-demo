@@ -39,7 +39,7 @@ export STORAGE_BUCKET=""  ## e.g. terrahub_bucket_123456
 
 Automated Setup (run the following command in terminal):
 ```shell
-export BILLING_ID="$(gcloud beta billing accounts list --format=json | jq '.[0].name[16:]')"
+export BILLING_ID="$(gcloud beta billing accounts list --format=json | jq -r '.[0].name[16:]')"
 ```
 
 > NOTE: If you don't have JQ CLI, check out this
@@ -213,7 +213,13 @@ Run the following command in terminal:
 terrahub component -t google_storage_bucket -n google_storage \
 && terrahub component -t google_cloudfunctions_function -n google_function -o ../google_storage \
 && terrahub component -t google_storage_bucket -n static_website \
-&& terrahub component -t google_storage_bucket_iam_member -n iam_object_viewer -o ../static_website
+&& terrahub component -t google_storage_bucket_iam_member -n iam_object_viewer -o ../static_website \
+&& terrahub component -t google_compute_http_health_check -n google_health_check \
+&& terrahub component -t google_compute_backend_bucket -n google_backend_bucket -o ../static_website \
+&& terrahub component -t google_compute_url_map -n google_urlmap -o ../google_backend_bucket \
+&& terrahub component -t google_compute_global_address -n google_external_address \
+&& terrahub component -t google_compute_target_http_proxy -n target_http_proxy -o  ../google_urlmap \
+&& terrahub component -t google_compute_global_forwarding_rule -n google_forwarding_rule -o ../target_http_proxy,../google_external_address
 ```
 
 Your output should be similar to the one below:
@@ -249,6 +255,7 @@ terrahub configure -i google_function -c component.template.resource.google_stor
 terrahub configure -i google_function -c component.template.resource.google_storage_bucket_object.google_storage_object.bucket='${data.terraform_remote_state.storage.thub_id}'
 terrahub configure -i google_function -c component.template.resource.google_storage_bucket_object.google_storage_object.source='./demo.zip'
 terrahub configure -i google_function -c component.template.resource.google_cloudfunctions_function.google_function.depends_on[0]='google_storage_bucket_object.google_storage_object'
+terrahub configure -i google_function -c component.template.resource.google_cloudfunctions_function.google_function.project='${local.google_project_id}'
 terrahub configure -i google_function -c component.template.resource.google_cloudfunctions_function.google_function.name='demofunction${local.project["code"]}'
 terrahub configure -i google_function -c component.template.resource.google_cloudfunctions_function.google_function.region='us-central1'
 terrahub configure -i google_function -c component.template.resource.google_cloudfunctions_function.google_function.runtime='nodejs8'
@@ -273,7 +280,8 @@ terrahub configure -i google_function -c build.env.variables.THUB_BUCKET_PATH="g
 terrahub configure -i google_function -c build.env.variables.THUB_BUCKET_KEY='deploy/google_function'
 terrahub configure -i google_function -c build.phases.pre_build.commands[0]='echo "BUILD: Running pre_build step"'
 terrahub configure -i google_function -c build.phases.pre_build.commands[1]='./scripts/download.sh $THUB_FUNCTION_TXT $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT'
-terrahub configure -i google_function -c build.phases.pre_build.commands[2]='./scripts/compare.sh $THUB_FUNCTION_TXT $THUB_BUILD_PATH/*.js'
+terrahub configure -i google_function -c build.phases.pre_build.commands[2]='./scripts/download.sh $THUB_FUNCTION_ZIP $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_ZIP'
+terrahub configure -i google_function -c build.phases.pre_build.commands[3]='./scripts/compare.sh $THUB_FUNCTION_TXT $THUB_BUILD_PATH/*.js'
 terrahub configure -i google_function -c build.phases.pre_build.finally[0]='echo "BUILD: pre_build step successful"'
 terrahub configure -i google_function -c build.phases.build.commands[0]='echo "BUILD: Running build step"'
 terrahub configure -i google_function -c build.phases.build.commands[1]='./scripts/build.sh $COMPONENT_NAME $OBJECT_NAME $THUB_BUCKET_KEY/'
@@ -282,7 +290,8 @@ terrahub configure -i google_function -c build.phases.post_build.commands[0]='ec
 terrahub configure -i google_function -c build.phases.post_build.commands[1]='./scripts/shasum.sh $THUB_FUNCTION_TXT'
 terrahub configure -i google_function -c build.phases.post_build.commands[2]='./scripts/zip.sh $THUB_FUNCTION_ZIP $THUB_BUILD_PATH/*.js'
 terrahub configure -i google_function -c build.phases.post_build.commands[3]='./scripts/upload.sh $THUB_FUNCTION_TXT $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT'
-terrahub configure -i google_function -c build.phases.post_build.commands[4]='rm -f .terrahub_build.env $THUB_FUNCTION_TXT'
+terrahub configure -i google_function -c build.phases.post_build.commands[4]='./scripts/upload.sh $THUB_FUNCTION_ZIP $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_ZIP'
+terrahub configure -i google_function -c build.phases.post_build.commands[5]='rm -f .terrahub_build.env $THUB_FUNCTION_TXT'
 terrahub configure -i google_function -c build.phases.post_build.finally[0]='echo "BUILD: post_build step successful"'
 ```
 
@@ -338,9 +347,132 @@ terrahub configure -i iam_object_viewer -c component.template.terraform.backend.
 terrahub configure -i iam_object_viewer -c component.template.data.terraform_remote_state.storage.backend='local'
 terrahub configure -i iam_object_viewer -c component.template.data.terraform_remote_state.storage.config.path='/tmp/.terrahub/local_backend/static_website/terraform.tfstate'
 terrahub configure -i iam_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_object_viewer.bucket="${STORAGE_BUCKET}_website"
-terrahub configure -i iam_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_object_viewer.role="roles/storage.objectViewer"
-terrahub configure -i iam_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_object_viewer.member="allUsers"
+terrahub configure -i iam_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_object_viewer.role='roles/storage.objectViewer'
+terrahub configure -i iam_object_viewer -c component.template.resource.google_storage_bucket_iam_member.iam_object_viewer.member='allUsers'
 terrahub configure -i iam_object_viewer -c component.template.variable -D -y
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Customize TerraHub Component for Backend Bucket
+
+Run the following commands in terminal:
+```shell
+terrahub configure -i google_backend_bucket -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_backend_bucket/terraform.tfstate'
+terrahub configure -i google_backend_bucket -c component.template.data.terraform_remote_state.storage.backend='local'
+terrahub configure -i google_backend_bucket -c component.template.data.terraform_remote_state.storage.config.path='/tmp/.terrahub/local_backend/static_website/terraform.tfstate'
+terrahub configure -i google_backend_bucket -c component.template.resource.google_compute_backend_bucket.google_backend_bucket.bucket_name='${data.terraform_remote_state.storage.thub_id}'
+terrahub configure -i google_backend_bucket -c component.template.resource.google_compute_backend_bucket.google_backend_bucket.name='static-asset-backend-bucket'
+terrahub configure -i google_backend_bucket -c component.template.resource.google_compute_backend_bucket.google_backend_bucket.project='${local.google_project_id}'
+terrahub configure -i google_backend_bucket -c component.template.resource.google_compute_backend_bucket.google_backend_bucket.enable_cdn='true'
+terrahub configure -i google_backend_bucket -c component.template.variable -D -y
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Customize TerraHub Component for Http Health Check
+
+Run the following commands in terminal:
+```shell
+terrahub configure -i google_health_check -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_health_check/terraform.tfstate'
+terrahub configure -i google_health_check -c component.template.resource.google_compute_http_health_check.google_health_check.request_path='/'
+terrahub configure -i google_health_check -c component.template.resource.google_compute_http_health_check.google_health_check.project='${local.google_project_id}'
+terrahub configure -i google_health_check -c component.template.resource.google_compute_http_health_check.google_health_check.name='health-check'
+terrahub configure -i google_health_check -c component.template.resource.google_compute_http_health_check.google_health_check.check_interval_sec='1'
+terrahub configure -i google_health_check -c component.template.resource.google_compute_http_health_check.google_health_check.timeout_sec='1'
+terrahub configure -i google_health_check -c component.template.variable -D -y
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Customize TerraHub Component for Url Map
+
+Run the following commands in terminal:
+```shell
+terrahub configure -i google_urlmap -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_urlmap/terraform.tfstate'
+terrahub configure -i google_urlmap -c component.template.data.terraform_remote_state.backend_service.backend='local'
+terrahub configure -i google_urlmap -c component.template.data.terraform_remote_state.backend_service.config.path='/tmp/.terrahub/local_backend/google_backend_bucket/terraform.tfstate'
+terrahub configure -i google_urlmap -c component.template.resource.google_compute_url_map.google_urlmap.name='demo-url-map'
+terrahub configure -i google_urlmap -c component.template.resource.google_compute_url_map.google_urlmap.default_service='${data.terraform_remote_state.backend_service.self_link}'
+terrahub configure -i google_urlmap -c component.template.resource.google_compute_url_map.google_urlmap.project='${local.google_project_id}'
+terrahub configure -i google_urlmap -c component.template.resource.google_compute_url_map.google_urlmap.host_rule.hosts[0]='demo'
+terrahub configure -i google_urlmap -c component.template.resource.google_compute_url_map.google_urlmap.host_rule.path_matcher='allpaths'
+terrahub configure -i google_urlmap -c component.template.resource.google_compute_url_map.google_urlmap.path_matcher.name='allpaths'
+terrahub configure -i google_urlmap -c component.template.resource.google_compute_url_map.google_urlmap.path_matcher.default_service='${data.terraform_remote_state.backend_service.self_link}'
+terrahub configure -i google_urlmap -c component.template.resource.google_compute_url_map.google_urlmap.path_matcher.path_rule.paths[0]='/*'
+terrahub configure -i google_urlmap -c component.template.resource.google_compute_url_map.google_urlmap.path_matcher.path_rule.service='${data.terraform_remote_state.backend_service.self_link}'
+terrahub configure -i google_urlmap -c component.template.variable -D -y
+terrahub configure -i google_urlmap -c component.template.output.self_link.value='${google_compute_url_map.google_urlmap.self_link}'
+terrahub configure -i google_urlmap -c component.template.resource.google_compute_url_map.google_urlmap.hosts -D -y
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Customize TerraHub Component for Compute Global Address
+
+Run the following commands in terminal:
+```shell
+terrahub configure -i google_external_address -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_external_address/terraform.tfstate'
+terrahub configure -i google_external_address -c component.template.resource.google_compute_global_address.google_external_address.name='demo-external-address'
+terrahub configure -i google_external_address -c component.template.resource.google_compute_global_address.google_external_address.project='${local.google_project_id}'
+terrahub configure -i google_external_address -c component.template.variable -D -y
+terrahub configure -i google_external_address -c component.template.output -D -y
+terrahub configure -i google_external_address -c component.template.output.address.value='${google_compute_global_address.google_external_address.address}'
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Customize TerraHub Component for Target Http Proxy
+
+Run the following commands in terminal:
+```shell
+terrahub configure -i target_http_proxy -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/target_http_proxy/terraform.tfstate'
+terrahub configure -i target_http_proxy -c component.template.data.terraform_remote_state.google_urlmap.backend='local'
+terrahub configure -i target_http_proxy -c component.template.data.terraform_remote_state.google_urlmap.config.path='/tmp/.terrahub/local_backend/google_urlmap/terraform.tfstate'
+terrahub configure -i target_http_proxy -c component.template.resource.google_compute_target_http_proxy.target_http_proxy.name='demo-frontend'
+terrahub configure -i target_http_proxy -c component.template.resource.google_compute_target_http_proxy.target_http_proxy.url_map='${data.terraform_remote_state.google_urlmap.self_link}'
+terrahub configure -i target_http_proxy -c component.template.resource.google_compute_target_http_proxy.target_http_proxy.project='${local.google_project_id}'
+terrahub configure -i target_http_proxy -c component.template.variable -D -y
+terrahub configure -i target_http_proxy -c component.template.output -D -y
+terrahub configure -i target_http_proxy -c component.template.output.self_link.value='${google_compute_target_http_proxy.target_http_proxy.self_link}'
+```
+
+Your output should be similar to the one below:
+```
+✅ Done
+```
+
+## Customize TerraHub Component for Forwarding Rule
+
+Run the following commands in terminal:
+```shell
+terrahub configure -i google_forwarding_rule -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_forwarding_rule/terraform.tfstate'
+terrahub configure -i google_forwarding_rule -c component.template.data.terraform_remote_state.external_address.backend='local'
+terrahub configure -i google_forwarding_rule -c component.template.data.terraform_remote_state.external_address.config.path='/tmp/.terrahub/local_backend/external_address/terraform.tfstate'
+terrahub configure -i google_forwarding_rule -c component.template.data.terraform_remote_state.target_http_proxy.backend='local'
+terrahub configure -i google_forwarding_rule -c component.template.data.terraform_remote_state.target_http_proxy.config.path='/tmp/.terrahub/local_backend/target_http_proxy/terraform.tfstate'
+terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.name='demo-frontend'
+terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.project='${local.google_project_id}'
+terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.port_range='80'
+terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.ip_address='${data.terraform_remote_state.google_external_address.address}'
+terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.target='${data.terraform_remote_state.target_http_proxy.self_link}'
+terrahub configure -i google_forwarding_rule -c component.template.variable -D -y
+terrahub configure -i google_forwarding_rule -c component.template.output -D -y
 ```
 
 Your output should be similar to the one below:
@@ -357,10 +489,16 @@ terrahub graph
 
 Your output should be similar to the one below:
 ```
-Project: demo-terraform-automation-gcp
+Project: demo-terraform-automation-google
+ ├─ google_external_address [path: ./google_external_address]
+ ├─ google_health_check [path: ./google_health_check]
  ├─ google_storage [path: ./google_storage]
  │  └─ google_function [path: ./google_function]
  └─ static_website [path: ./static_website]
+    ├─ google_backend_bucket [path: ./google_backend_bucket]
+    │  └─ google_urlmap [path: ./google_urlmap]
+    │     └─ target_http_proxy [path: ./target_http_proxy]
+    │        └─ google_forwarding_rule [path: ./google_forwarding_rule]
     └─ iam_object_viewer [path: ./iam_object_viewer]
 ```
 

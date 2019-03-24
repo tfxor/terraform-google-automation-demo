@@ -15,5 +15,5 @@ template:
   provider:
     google: {}
   locals:
-    google_project_id: terrahub-123456
-    google_billing_account: 123456-ABCDEF-ZYXWVU
+    google_project_id: terrahub-demo-f2754a99
+    google_billing_account: 0194A4-8A0AAF-6F01FE

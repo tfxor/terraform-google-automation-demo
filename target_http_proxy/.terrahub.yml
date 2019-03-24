@@ -1,0 +1,26 @@
+component:
+  name: target_http_proxy
+  mapping:
+    - .
+  dependsOn:
+    - ../google_urlmap
+  template:
+    resource:
+      google_compute_target_http_proxy:
+        target_http_proxy:
+          name: demo-frontend
+          url_map: '${data.terraform_remote_state.google_urlmap.self_link}'
+          project: '${local.google_project_id}'
+    terraform:
+      backend:
+        local:
+          path: /tmp/.terrahub/local_backend/target_http_proxy/terraform.tfstate
+    data:
+      terraform_remote_state:
+        google_urlmap:
+          backend: local
+          config:
+            path: /tmp/.terrahub/local_backend/google_urlmap/terraform.tfstate
+    output:
+      self_link:
+        value: '${google_compute_target_http_proxy.target_http_proxy.self_link}'

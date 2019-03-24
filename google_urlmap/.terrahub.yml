@@ -1,0 +1,42 @@
+component:
+  name: google_urlmap
+  mapping:
+    - .
+  dependsOn:
+    - ../google_backend_bucket
+  template:
+    resource:
+      google_compute_url_map:
+        google_urlmap:
+          path_matcher:
+            name: allpaths
+            default_service: '${data.terraform_remote_state.backend_service.self_link}'
+            path_rule:
+              paths:
+                - /*
+              service: '${data.terraform_remote_state.backend_service.self_link}'
+          name: demo-url-map
+          project: '${local.google_project_id}'
+          default_service: '${data.terraform_remote_state.backend_service.self_link}'
+          host_rule:
+            hosts:
+              - demo
+            path_matcher: allpaths
+    output:
+      id:
+        value: '${google_compute_url_map.google_urlmap.id}'
+      thub_id:
+        value: '${google_compute_url_map.google_urlmap.id}'
+      self_link:
+        value: '${google_compute_url_map.google_urlmap.self_link}'
+    terraform:
+      backend:
+        local:
+          path: /tmp/.terrahub/local_backend/google_urlmap/terraform.tfstate
+    data:
+      terraform_remote_state:
+        backend_service:
+          backend: local
+          config:
+            path: >-
+              /tmp/.terrahub/local_backend/google_backend_bucket/terraform.tfstate

@@ -20,9 +20,10 @@ component:
           trigger_http: true
           timeout: 60
           entry_point: helloGET
+          project: '${local.google_project_id}'
       google_storage_bucket_object:
         google_storage_object:
-          name: demo.zip
+          name: deploy/google_function/1553447397.zip
           bucket: '${data.terraform_remote_state.storage.thub_id}'
           source: ./demo.zip
     terraform:
@@ -49,7 +50,7 @@ build:
       OBJECT_NAME: google_storage_object
       THUB_BUILD_PATH: ..
       THUB_BUILD_OK: false
-      THUB_BUCKET_PATH: 'gs://terrahub_bucket_123456'
+      THUB_BUCKET_PATH: 'gs://terrahub_012345'
       THUB_BUCKET_KEY: deploy/google_function
   phases:
     pre_build:
@@ -58,6 +59,9 @@ build:
         - >-
           ./scripts/download.sh $THUB_FUNCTION_TXT
           $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT
+        - >-
+          ./scripts/download.sh $THUB_FUNCTION_ZIP
+          $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_ZIP
         - ./scripts/compare.sh $THUB_FUNCTION_TXT $THUB_BUILD_PATH/*.js
       finally:
         - 'echo "BUILD: pre_build step successful"'
@@ -75,6 +79,9 @@ build:
         - >-
           ./scripts/upload.sh $THUB_FUNCTION_TXT
           $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT
+        - >-
+          ./scripts/upload.sh $THUB_FUNCTION_ZIP
+          $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_ZIP
         - rm -f .terrahub_build.env $THUB_FUNCTION_TXT
       finally:
         - 'echo "BUILD: post_build step successful"'
