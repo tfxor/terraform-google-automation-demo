@@ -9,6 +9,7 @@ component:
       google_cloudfunctions_function:
         google_function:
           name: 'demofunction${local.project["code"]}'
+          project: '${local.google_project_id}'
           depends_on:
             - google_storage_bucket_object.google_storage_object
           region: us-central1
@@ -76,6 +77,9 @@ build:
         - 'echo "BUILD: Running post_build step"'
         - ./scripts/shasum.sh $THUB_FUNCTION_TXT
         - ./scripts/zip.sh $THUB_FUNCTION_ZIP $THUB_BUILD_PATH/*.js
+        - >-
+          ./scripts/upload.sh $THUB_FUNCTION_ZIP
+          $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_ZIP
         - >-
           ./scripts/upload.sh $THUB_FUNCTION_TXT
           $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT
