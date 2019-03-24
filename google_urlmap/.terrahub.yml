@@ -1,7 +1,5 @@
 component:
   name: google_urlmap
-  mapping:
-    - .
   dependsOn:
     - ../google_backend_bucket
   template:

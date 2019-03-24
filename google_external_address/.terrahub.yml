@@ -1,7 +1,5 @@
 component:
   name: google_external_address
-  mapping:
-    - .
   template:
     resource:
       google_compute_global_address:

@@ -1,7 +1,5 @@
 component:
   name: google_backend_bucket
-  mapping:
-    - .
   dependsOn:
     - ../static_website
   template:
