@@ -1,5 +1,7 @@
 component:
   name: google_function
+  mapping:
+    - .
   dependsOn:
     - ../google_storage
   template:
