@@ -463,14 +463,14 @@ Your output should be similar to the one below:
 Run the following commands in terminal:
 ```shell
 terrahub configure -i google_forwarding_rule -c component.template.terraform.backend.local.path='/tmp/.terrahub/local_backend/google_forwarding_rule/terraform.tfstate'
-terrahub configure -i google_forwarding_rule -c component.template.data.terraform_remote_state.google_external_address.backend='local'
-terrahub configure -i google_forwarding_rule -c component.template.data.terraform_remote_state.google_external_address.config.path='/tmp/.terrahub/local_backend/google_external_address/terraform.tfstate'
+terrahub configure -i google_forwarding_rule -c component.template.data.terraform_remote_state.external_address.backend='local'
+terrahub configure -i google_forwarding_rule -c component.template.data.terraform_remote_state.external_address.config.path='/tmp/.terrahub/local_backend/google_external_address/terraform.tfstate'
 terrahub configure -i google_forwarding_rule -c component.template.data.terraform_remote_state.target_http_proxy.backend='local'
 terrahub configure -i google_forwarding_rule -c component.template.data.terraform_remote_state.target_http_proxy.config.path='/tmp/.terrahub/local_backend/target_http_proxy/terraform.tfstate'
 terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.name='demo-frontend'
 terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.project='${local.google_project_id}'
 terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.port_range='80'
-terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.ip_address='${data.terraform_remote_state.google_external_address.address}'
+terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.ip_address='${data.terraform_remote_state.external_address.address}'
 terrahub configure -i google_forwarding_rule -c component.template.resource.google_compute_global_forwarding_rule.google_forwarding_rule.target='${data.terraform_remote_state.target_http_proxy.self_link}'
 terrahub configure -i google_forwarding_rule -c component.template.variable -D -y
 terrahub configure -i google_forwarding_rule -c component.template.output -D -y

@@ -8,8 +8,8 @@ component:
         google_backend_bucket:
           bucket_name: '${data.terraform_remote_state.storage.thub_id}'
           name: static-asset-backend-bucket
-          project: '${local.google_project_id}'
           enable_cdn: true
+          project: '${local.google_project_id}'
     output:
       id:
         value: '${google_compute_backend_bucket.google_backend_bucket.id}'
