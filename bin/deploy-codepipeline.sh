@@ -75,11 +75,11 @@ terrahub configure -c component.template.data.terraform_remote_state.google_urlm
 terrahub configure -c component.template.data.terraform_remote_state.google_urlmap.config.bucket="data-lake-terrahub" -i "target_http_proxy"
 terrahub configure -c component.template.data.terraform_remote_state.google_urlmap.config.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_urlmap" -i "target_http_proxy"
 
-# terrahub build -i google_function,static_website \
-# && terrahub run -y ${THUB_APPLY}
+terrahub build -i google_function,static_website \
+&& terrahub run -y ${THUB_APPLY}
 
 # terrahub run -y -a -i google_storage,static_website \
 # && terrahub build -i google_function,static_website \
 # && terrahub run -y -b ${THUB_APPLY}
 
-terrahub run -d -y -x google_storage,static_website
+# terrahub run -d -y -x google_storage,static_website
