@@ -33,7 +33,7 @@ export BILLING_ID=""      ## e.g. 123456-ABCDEF-ZYXWVU
 export PROJECT_NAME=""    ## e.g. TerraHub
 export IAM_NAME=""        ## e.g. terraform
 export IAM_DESC=""        ## e.g. terraform service account
-export STORAGE_BUCKET=""  ## e.g. terrahub_bucket_123456
+export STORAGE_BUCKET=""  ## e.g. terrahub_123456
 ```
 ### Setup BILLING_ID Programmatically
 

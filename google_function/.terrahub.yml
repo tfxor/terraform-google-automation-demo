@@ -50,7 +50,7 @@ build:
       OBJECT_NAME: google_storage_object
       THUB_BUILD_PATH: ..
       THUB_BUILD_OK: false
-      THUB_BUCKET_PATH: 'gs://terrahub_bucket_123456'
+      THUB_BUCKET_PATH: 'gs://terrahub_123456'
       THUB_BUCKET_KEY: deploy/google_function
   phases:
     pre_build:
