@@ -17,7 +17,7 @@ git clone https://github.com/TerraHubCorp/www.git && rm -rf ./www/.terrahub*
 export GOOGLE_CLOUD_PROJECT="$(gcloud config list --format=json | jq -r '.core.project')"
 if [ "${GOOGLE_CLOUD_PROJECT}" == "null" ]; then echo >&2 'gcloud core project is missing. aborting...'; exit 1; fi
 export GOOGLE_APPLICATION_CREDENTIALS="${HOME}/.config/gcloud/${GOOGLE_CLOUD_PROJECT}.json"
-# echo ${GOOGLE_APPLICATION_CREDENTIALS_CONTENT} > ${GOOGLE_APPLICATION_CREDENTIALS}
+echo ${GOOGLE_APPLICATION_CREDENTIALS_CONTENT} > ${GOOGLE_APPLICATION_CREDENTIALS}
 gcloud auth activate-service-account --key-file ${GOOGLE_APPLICATION_CREDENTIALS}
 BILLING_ID="$(gcloud beta billing accounts list --format=json | jq -r '.[0].name[16:]')"
 

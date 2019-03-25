@@ -1,7 +1,5 @@
 component:
   name: target_http_proxy
-  mapping:
-    - .
   dependsOn:
     - ../google_urlmap
   template:

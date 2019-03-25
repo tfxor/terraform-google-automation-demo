@@ -1,7 +1,5 @@
 component:
   name: static_website
-  mapping:
-    - .
   template:
     resource:
       google_storage_bucket:

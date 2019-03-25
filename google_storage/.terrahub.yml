@@ -1,7 +1,5 @@
 component:
   name: google_storage
-  mapping:
-    - .
   template:
     resource:
       google_storage_bucket:

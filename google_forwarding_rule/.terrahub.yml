@@ -1,7 +1,5 @@
 component:
   name: google_forwarding_rule
-  mapping:
-    - .
   dependsOn:
     - ../target_http_proxy
     - ../google_external_address

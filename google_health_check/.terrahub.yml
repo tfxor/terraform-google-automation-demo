@@ -1,7 +1,5 @@
 component:
   name: google_health_check
-  mapping:
-    - .
   template:
     resource:
       google_compute_http_health_check:
