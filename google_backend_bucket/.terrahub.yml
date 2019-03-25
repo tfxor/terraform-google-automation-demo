@@ -1,5 +1,7 @@
 component:
   name: google_backend_bucket
+  mapping:
+    - .
   dependsOn:
     - ../static_website
   template:
@@ -8,8 +10,8 @@ component:
         google_backend_bucket:
           bucket_name: '${data.terraform_remote_state.storage.thub_id}'
           name: static-asset-backend-bucket
-          enable_cdn: true
           project: '${local.google_project_id}'
+          enable_cdn: true
     output:
       id:
         value: '${google_compute_backend_bucket.google_backend_bucket.id}'

@@ -1,5 +1,7 @@
 component:
   name: iam_object_viewer
+  mapping:
+    - .
   dependsOn:
     - ../static_website
   template:
@@ -7,7 +9,7 @@ component:
       google_storage_bucket_iam_member:
         iam_object_viewer:
           role: roles/storage.objectViewer
-          bucket: terrahub_123456_website
+          bucket: terrahub_bucket_123456_website
           member: allUsers
     output:
       etag:

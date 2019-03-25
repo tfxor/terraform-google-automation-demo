@@ -1,12 +1,14 @@
 component:
   name: google_health_check
+  mapping:
+    - .
   template:
     resource:
       google_compute_http_health_check:
         google_health_check:
           name: health-check
-          project: ${local.google_project_id}
           request_path: /
+          project: '${local.google_project_id}'
           check_interval_sec: 1
           timeout_sec: 1
     output:

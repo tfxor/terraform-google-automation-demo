@@ -1,6 +1,6 @@
 project:
   name: demo-terraform-automation-gcp
-  code: 7b3c5d2c
+  code: 42c08492
   include:
     - .
   exclude:
