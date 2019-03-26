@@ -81,3 +81,5 @@ terrahub build -i google_function,static_website \
 # terrahub run -y -a -i google_storage,static_website \
 # && terrahub build -i google_function,static_website \
 # && terrahub run -y -b ${THUB_APPLY}
+
+# terrahub run -d -y -x google_storage,static_website

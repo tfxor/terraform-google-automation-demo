@@ -22,7 +22,8 @@ component:
         external_address:
           backend: local
           config:
-            path: /tmp/.terrahub/local_backend/google_external_address/terraform.tfstate
+            path: >-
+              /tmp/.terrahub/local_backend/google_external_address/terraform.tfstate
         target_http_proxy:
           backend: local
           config:

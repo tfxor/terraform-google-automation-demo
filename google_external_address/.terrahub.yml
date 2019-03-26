@@ -5,7 +5,7 @@ component:
       google_compute_global_address:
         google_external_address:
           name: demo-external-address
-          project: ${local.google_project_id}
+          project: '${local.google_project_id}'
     terraform:
       backend:
         local:

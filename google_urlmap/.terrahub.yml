@@ -14,8 +14,8 @@ component:
                 - /*
               service: '${data.terraform_remote_state.backend_service.self_link}'
           name: demo-url-map
-          project: '${local.google_project_id}'
           default_service: '${data.terraform_remote_state.backend_service.self_link}'
+          project: '${local.google_project_id}'
           host_rule:
             hosts:
               - demo
