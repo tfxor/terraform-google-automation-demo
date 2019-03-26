@@ -1,0 +1,16 @@
+component:
+  name: google_external_address
+  template:
+    resource:
+      google_compute_global_address:
+        google_external_address:
+          name: demo-external-address
+          project: ${local.google_project_id}
+    terraform:
+      backend:
+        local:
+          path: >-
+            /tmp/.terrahub/local_backend/google_external_address/terraform.tfstate
+    output:
+      address:
+        value: '${google_compute_global_address.google_external_address.address}'
