@@ -146,7 +146,7 @@ Your output should be similar to the one below:
 ```
 Usage: terrahub [command] [options]
 
-terrahub@0.0.1 (built: 2018-04-07T19:15:39.787Z)
+terrahub@0.0.1 (built: 2018-04-14T19:15:39.787Z)
 ```
 
 > NOTE: If you don't have TerraHub CLI, check out this
@@ -516,12 +516,11 @@ Your output should be similar to the one below:
 ```
 ```
 
-### Prepare Source Code for Deployment
+### Run TerraHub Automation
 
 Run the following command in terminal:
-
 ```shell
-terrahub build -i google_function,static_website
+terrahub run -y -a -b
 ```
 
 Your output should be similar to the one below:
@@ -532,18 +531,7 @@ Your output should be similar to the one below:
 does not have storage.objects.get access to [***]`, run `gsutil config` and
 setup default project id.
 
-### Run TerraHub Automation
-
-Run the following command in terminal:
-```shell
-terrahub run -y -a
-```
-
-Your output should be similar to the one below:
-```
-```
-
-## Testing Deployed Cloud Resources
+## Test Deployed Cloud Resources
 
 Check if backend was deployed successfully. Run the following command in terminal:
 ```
