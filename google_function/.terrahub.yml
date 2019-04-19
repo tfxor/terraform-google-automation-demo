@@ -9,9 +9,9 @@ component:
       google_cloudfunctions_function:
         google_function:
           name: 'demofunction${local.project["code"]}'
-          project: '${local.google_project_id}'
           depends_on:
             - google_storage_bucket_object.google_storage_object
+          project: '${local.google_project_id}'
           region: us-central1
           runtime: nodejs8
           description: My demo function
@@ -50,7 +50,7 @@ build:
       OBJECT_NAME: google_storage_object
       THUB_BUILD_PATH: ..
       THUB_BUILD_OK: false
-      THUB_BUCKET_PATH: 'gs://terrahub_bucket_123456'
+      THUB_BUCKET_PATH: 'gs://terrahub_123456'
       THUB_BUCKET_KEY: deploy/google_function
   phases:
     pre_build:
@@ -61,14 +61,11 @@ build:
           $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT
         - >-
           ./scripts/download.sh $THUB_FUNCTION_ZIP
-          $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_ZIP
-        - ./scripts/compare.sh $THUB_FUNCTION_TXT $THUB_BUILD_PATH/*.js
-      finally:
-        - 'echo "BUILD: pre_build step successful"'
+          $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_
+
+          terrahub configure -i google_function -c
+          build.phases.pre_build.commands[3]=./scripts/compare.sh
     build:
-      commands:
-        - 'echo "BUILD: Running build step"'
-        - ./scripts/build.sh $COMPONENT_NAME $OBJECT_NAME $THUB_BUCKET_KEY/
       finally:
         - 'echo "BUILD: build step successful"'
     post_build:
@@ -77,11 +74,11 @@ build:
         - ./scripts/shasum.sh $THUB_FUNCTION_TXT
         - ./scripts/zip.sh $THUB_FUNCTION_ZIP $THUB_BUILD_PATH/*.js
         - >-
-          ./scripts/upload.sh $THUB_FUNCTION_ZIP
-          $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_ZIP
-        - >-
           ./scripts/upload.sh $THUB_FUNCTION_TXT
           $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_TXT
+        - >-
+          ./scripts/upload.sh $THUB_FUNCTION_ZIP
+          $THUB_BUCKET_PATH/$THUB_BUCKET_KEY/$THUB_FUNCTION_ZIP
         - rm -f .terrahub_build.env $THUB_FUNCTION_TXT
       finally:
         - 'echo "BUILD: post_build step successful"'
