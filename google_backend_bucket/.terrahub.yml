@@ -1,7 +1,7 @@
 component:
   name: google_backend_bucket
   dependsOn:
-    - ../static_website
+    - static_website
   template:
     resource:
       google_compute_backend_bucket:
@@ -10,6 +10,11 @@ component:
           name: static-asset-backend-bucket
           enable_cdn: true
           project: '${local.google_project_id}'
+    dynamic:
+      data:
+        terraform_remote_state:
+          - component: static_website
+            name: storage
     output:
       id:
         value: '${google_compute_backend_bucket.google_backend_bucket.id}'
@@ -26,9 +31,3 @@ component:
       backend:
         local:
           path: /tmp/.terrahub/local_backend/google_backend_bucket/terraform.tfstate
-    data:
-      terraform_remote_state:
-        storage:
-          backend: local
-          config:
-            path: /tmp/.terrahub/local_backend/static_website/terraform.tfstate
