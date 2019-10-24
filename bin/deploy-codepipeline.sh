@@ -8,6 +8,7 @@ export NODE_PATH="$(npm root -g)"
 if [ -z "${BRANCH_FROM}" ]; then BRANCH_FROM = "dev"; fi
 if [ -z "${BRANCH_TO}" ]; then BRANCH_TO = "dev"; fi
 if [ "${THUB_STATE}" == "approved" ]; then THUB_APPLY="-a"; fi
+if [ "${BRANCH_TO}" != "${BRANCH_FROM}" ]; then GIT_DIFF="-g ${BRANCH_TO}...${BRANCH_FROM}"; fi
 
 git --version > /dev/null 2>&1 || { echo >&2 'git is missing. aborting...'; exit 1; }
 git checkout $BRANCH_TO
@@ -76,10 +77,4 @@ terrahub configure -c component.template.data.terraform_remote_state.google_urlm
 terrahub configure -c component.template.data.terraform_remote_state.google_urlmap.config.prefix="terraform/terrahubcorp/demo-terraform-automation-gcp/google_urlmap" -i "target_http_proxy"
 
 terrahub build -i google_function,static_website \
-&& terrahub run -y ${THUB_APPLY}
-
-# terrahub run -y -a -i google_storage,static_website \
-# && terrahub build -i google_function,static_website \
-# && terrahub run -y -b ${THUB_APPLY}
-
-# terrahub run -d -y -x google_storage,static_website
+  && terrahub run -y ${THUB_APPLY} ${GIT_DIFF}

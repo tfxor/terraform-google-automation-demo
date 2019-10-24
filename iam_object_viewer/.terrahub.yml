@@ -1,7 +1,7 @@
 component:
   name: iam_object_viewer
   dependsOn:
-    - ../static_website
+    - static_website
   template:
     resource:
       google_storage_bucket_iam_member:
@@ -9,6 +9,11 @@ component:
           role: roles/storage.objectViewer
           bucket: terrahub_123456_website
           member: allUsers
+    dynamic:
+      data:
+        terraform_remote_state:
+          - component: static_website
+            name: storage
     output:
       etag:
         value: '${google_storage_bucket_iam_member.iam_object_viewer.etag}'
@@ -16,9 +21,3 @@ component:
       backend:
         local:
           path: /tmp/.terrahub/local_backend/iam_object_viewer/terraform.tfstate
-    data:
-      terraform_remote_state:
-        storage:
-          backend: local
-          config:
-            path: /tmp/.terrahub/local_backend/static_website/terraform.tfstate

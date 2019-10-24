@@ -1,7 +1,7 @@
 component:
   name: google_urlmap
   dependsOn:
-    - ../google_backend_bucket
+    - google_backend_bucket
   template:
     resource:
       google_compute_url_map:
@@ -20,6 +20,11 @@ component:
             hosts:
               - demo
             path_matcher: allpaths
+    dynamic:
+      data:
+        terraform_remote_state:
+          - component: google_backend_bucket
+            name: backend_service
     output:
       id:
         value: '${google_compute_url_map.google_urlmap.id}'
@@ -31,10 +36,3 @@ component:
       backend:
         local:
           path: /tmp/.terrahub/local_backend/google_urlmap/terraform.tfstate
-    data:
-      terraform_remote_state:
-        backend_service:
-          backend: local
-          config:
-            path: >-
-              /tmp/.terrahub/local_backend/google_backend_bucket/terraform.tfstate
