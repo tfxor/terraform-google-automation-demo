@@ -1,8 +1,8 @@
 component:
   name: google_forwarding_rule
   dependsOn:
-    - ../target_http_proxy
-    - ../google_external_address
+    - target_http_proxy
+    - google_external_address
   template:
     resource:
       google_compute_global_forwarding_rule:
@@ -12,19 +12,15 @@ component:
           project: '${local.google_project_id}'
           port_range: 80
           ip_address: '${data.terraform_remote_state.external_address.address}'
+    dynamic:
+      data:
+        terraform_remote_state:
+          - component: target_http_proxy
+            name: target_http_proxy
+          - component: google_external_address
+            name: external_address
     terraform:
       backend:
         local:
           path: >-
             /tmp/.terrahub/local_backend/google_forwarding_rule/terraform.tfstate
-    data:
-      terraform_remote_state:
-        external_address:
-          backend: local
-          config:
-            path: >-
-              /tmp/.terrahub/local_backend/google_external_address/terraform.tfstate
-        target_http_proxy:
-          backend: local
-          config:
-            path: /tmp/.terrahub/local_backend/target_http_proxy/terraform.tfstate

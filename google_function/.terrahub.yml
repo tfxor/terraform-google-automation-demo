@@ -3,7 +3,7 @@ component:
   mapping:
     - .
   dependsOn:
-    - ../google_storage
+    - google_storage
   template:
     resource:
       google_cloudfunctions_function:
@@ -26,16 +26,15 @@ component:
           name: demo.zip
           bucket: '${data.terraform_remote_state.storage.thub_id}'
           source: ./demo.zip
+    dynamic:
+      data:
+        terraform_remote_state:
+          - component: google_storage
+            name: storage
     terraform:
       backend:
         local:
           path: /tmp/.terrahub/local_backend/google_function/terraform.tfstate
-    data:
-      terraform_remote_state:
-        storage:
-          backend: local
-          config:
-            path: /tmp/.terrahub/local_backend/google_storage/terraform.tfstate
     output:
       id:
         value: '${google_cloudfunctions_function.google_function.id}'
